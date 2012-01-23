@@ -1,5 +1,4 @@
 (ns clj-thatfinger.stemmer.brazilian-stemmer
-  (:import [org.apache.lucene.analysis TokenStream])
   (:import [org.apache.lucene.analysis.tokenattributes CharTermAttribute])
   (:import [org.apache.lucene.analysis.br BrazilianAnalyzer])
   (:import [org.apache.lucene.util Version])
