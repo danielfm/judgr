@@ -1,6 +1,4 @@
 (ns clj-thatfinger.test.stemmer.brazilian-stemmer
-  (:import [org.apache.lucene.analysis.br BrazilianAnalyzer])
-  (:import [org.apache.lucene.util Version])
   (:use [clj-thatfinger.stemmer.brazilian-stemmer])
   (:use [clojure.test]))
 
