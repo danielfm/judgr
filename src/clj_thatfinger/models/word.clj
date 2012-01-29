@@ -1,0 +1,1 @@
+(ns clj-thatfinger.models.word)
