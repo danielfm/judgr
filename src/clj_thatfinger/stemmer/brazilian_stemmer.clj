@@ -8,12 +8,12 @@
 (def analyzer (BrazilianAnalyzer. Version/LUCENE_30))
 
 (defn remove-repeated-chars
-  "Decreases long sequences of repeated chars in s."
+  "Removes long sequences of repeated chars in string s."
   [s]
   (str/replace s #"(\w)\1{2,}" "$1$1"))
 
 (defn stem
-  "Returns an array with the stemming output for string s."
+  "Returns a set with the stemming output for string s."
   [s]
   (let [stream (.tokenStream analyzer "text" (StringReader. (remove-repeated-chars s)))]
     (loop [tokens []]
