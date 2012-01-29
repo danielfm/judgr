@@ -12,10 +12,11 @@
   [s]
   (str/replace s #"(\w)\1{2,}" "$1$1"))
 
-(defn stem [s]
+(defn stem
   "Returns an array with the stemming output for string s."
+  [s]
   (let [stream (.tokenStream analyzer "text" (StringReader. (remove-repeated-chars s)))]
     (loop [tokens []]
       (if-not (.incrementToken stream)
-        tokens
+        (set tokens)
         (recur (conj tokens (.term (.getAttribute stream CharTermAttribute))))))))
