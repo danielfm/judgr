@@ -9,8 +9,8 @@
   [word offensive?]
   (let [inc-offensive (if offensive? 1 0)]
     (mongodb/update! :words {:word word}
-                   {:$inc {:total 1,
-                           :total-offensive inc-offensive}})))
+                     {:$inc {:total 1,
+                             :total-offensive inc-offensive}})))
 
 (defn add-message!
   "Stores a message indicating whether it's offensive or not."
