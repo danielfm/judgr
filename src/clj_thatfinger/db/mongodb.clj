@@ -18,21 +18,21 @@
   (let [words (stem message)]
     (doall (map #(update-word! % offensive?) words))
     (mongodb/insert! :messages {:message message
-                              :words words
-                              :created-at (Date.)
-                              :offensive? offensive?})))
+                                :words words
+                                :created-at (Date.)
+                                :offensive? offensive?})))
 
 (defn get-word
   "Returns information about a word."
   [word]
   (mongodb/fetch-one :words
-                   :where {:word word}))
+                     :where {:word word}))
 
 (defn count-offensive-messages
   "Returns the number of messages flagged as offensive."
   []
   (mongodb/fetch-count :messages
-                     :where {:offensive? true}))
+                       :where {:offensive? true}))
 
 (defn count-messages
   "Returns the total number of messages."
