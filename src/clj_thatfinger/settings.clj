@@ -4,9 +4,10 @@
 (def db-module 'mongodb)
 
 ;; MongoDB settings
-(def mongodb-database "thatfinger")
-(def mongodb-host "127.0.0.1")
-(def mongodb-port 27017)
-(def mongodb-auth false)
-(def mongodb-username "")
-(def mongodb-password "")
+(def ^:dynamic *mongodb-database* "thatfinger")
+(def ^:dynamic *mongodb-host* "127.0.0.1")
+(def ^:dynamic *mongodb-port* 27017)
+
+(def ^:dynamic *mongodb-auth* false)
+(def ^:dynamic *mongodb-username* "")
+(def ^:dynamic *mongodb-password* "")
