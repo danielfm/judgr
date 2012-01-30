@@ -1,7 +1,7 @@
 (ns clj-thatfinger.settings)
 
-(def stemmer-module 'brazilian-stemmer)
-(def db-module 'mongodb)
+(def ^:dynamic *stemmer-module* 'brazilian-stemmer)
+(def ^:dynamic *db-module* 'mongodb)
 
 ;; MongoDB settings
 (def ^:dynamic *mongodb-database* "thatfinger")
