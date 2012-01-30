@@ -1,6 +1,4 @@
 (ns clj-thatfinger.stemmer.dummy_stemmer)
 
-(defn stem
-  ""
-  [s]
+(defn stem [s]
   "dummy stemmer")
