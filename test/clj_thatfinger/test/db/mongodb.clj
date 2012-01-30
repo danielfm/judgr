@@ -4,7 +4,7 @@
   (:use [clojure.test]))
 
 (defn- remove-collections!
-  ""
+  "Removes all collections from MongoDB."
   []
   (mongodb/drop-coll! :words)
   (mongodb/drop-coll! :messages))
