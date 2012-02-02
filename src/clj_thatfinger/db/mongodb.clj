@@ -52,7 +52,7 @@
 (defn- ensure-indexes!
   "Creates all necessary MongoDB indexes."
   []
-  (mongodb/add-index! :messages [:offensive?])
+  (mongodb/add-index! :messages [:category])
   (mongodb/add-index! :words [:word] :unique true))
 
 (defn create-connection!
