@@ -5,22 +5,21 @@
         [clj-thatfinger.stemmer.default-stemmer]))
 
 (defn- update-word!
-  "Updates the statistics of a word according to the offensive? flag."
-  [word offensive?]
-  (let [inc-offensive (if offensive? 1 0)]
-    (mongodb/update! :words {:word word}
-                     {:$inc {:total 1,
-                             :total-offensive inc-offensive}})))
+  "Updates the statistics of a word according to the category cat."
+  [word cat]
+  (mongodb/update! :words {:word word}
+                   {:$inc {:total 1
+                           cat 1}}))
 
 (defn add-message!
-  "Stores a message indicating whether it's offensive or not."
-  [message & [offensive?]]
+  "Stores a message indicating its category."
+  [message cat]
   (let [words (stem message)]
-    (doall (map #(update-word! % offensive?) words))
+    (doall (map #(update-word! % cat) words))
     (mongodb/insert! :messages {:message message
                                 :words words
                                 :created-at (Date.)
-                                :offensive? offensive?})))
+                                :category cat})))
 
 (defn get-word
   "Returns information about a word."
@@ -28,16 +27,21 @@
   (mongodb/fetch-one :words
                      :where {:word word}))
 
-(defn count-offensive-messages
-  "Returns the number of messages flagged as offensive."
-  []
+(defn count-messages-of-category
+  "Returns the number of messages of a category cat."
+  [cat]
   (mongodb/fetch-count :messages
-                       :where {:offensive? true}))
+                       :where {:category cat}))
 
 (defn count-messages
   "Returns the total number of messages."
   []
   (mongodb/fetch-count :messages))
+
+(defn count-words
+  "Returns the total number of words."
+  []
+  (mongodb/fetch-count :words))
 
 (defn- authenticate
   "Authenticates against the specified MongoDB connection."

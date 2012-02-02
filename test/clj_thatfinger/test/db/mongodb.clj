@@ -13,23 +13,30 @@
   (binding [clj-thatfinger.settings/*mongodb-database* "thatfinger-test"]
     (create-connection!)
     (remove-collections!)
-    (add-message! "Uma mensagem")
+    (add-message! "Uma mensagem" :ok)
     (f)))
 
 (use-fixtures :each test-database)
 
 (deftest counting-messages
-  (add-message! "Outra mensagem" true)
+  (add-message! "Outra mensagem" :offensive)
 
   (testing "counting all messages"
     (is (= 2 (count-messages))))
 
-  (testing "counting offsensive messages"
-    (is (= 1 (count-offensive-messages)))))
+  (testing "counting messages of a category"
+    (is (= 1 (count-messages-of-category :offensive)))))
+
+(deftest counting-words
+  (add-message! "Um texto" :ok)
+
+  (testing "counting all words"
+    (is (= 2 (count-words)))))
 
 (deftest get-word-fn
   (testing "information about a word"
     (let [word (get-word "mensag")]
       (is (= "mensag" (:word word)))
       (is (= 1 (:total word)))
-      (is (zero? (:total-offensive word))))))
+      (is (nil? (:offensive word)))
+      (is (= 1 (:ok word))))))

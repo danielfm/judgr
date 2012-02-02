@@ -10,4 +10,4 @@
 
 (deftest module-require
   (testing "require module defined in settings"
-    (= "dummy db" (add-message! "Some message"))))
+    (= "dummy db" (add-message! "Some message" :ok))))
