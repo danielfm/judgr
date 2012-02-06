@@ -38,5 +38,5 @@
     (let [word (get-word "mensag")]
       (is (= "mensag" (:word word)))
       (is (= 1 (:total word)))
-      (is (nil? (:offensive word)))
-      (is (= 1 (:ok word))))))
+      (is (= '(:ok) (keys (:categories word))))
+      (is (= 1 (:ok (:categories word)))))))

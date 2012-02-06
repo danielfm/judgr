@@ -9,7 +9,7 @@
   [word cat]
   (mongodb/update! :words {:word word}
                    {:$inc {:total 1
-                           cat 1}}))
+                           (keyword (str "categories." (name cat))) 1}}))
 
 (defn add-message!
   "Stores a message indicating its category."
