@@ -1,16 +1,14 @@
 (ns clj-thatfinger.db.dummy-db)
 
-(defn add-message! [message cat]
+(defn add-message! [message cls]
   "dummy db")
 
 (defn get-word [word]
   "dummy")
 
-(defn count-messages-of-category [cat]
-  123)
-
-(defn count-messages []
-  121)
+(defn count-messages
+  ([]    121)
+  ([cls] 123))
 
 (defn count-words []
   221)

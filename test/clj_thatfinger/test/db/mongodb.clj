@@ -24,8 +24,8 @@
   (testing "counting all messages"
     (is (= 2 (count-messages))))
 
-  (testing "counting messages of a category"
-    (is (= 1 (count-messages-of-category :offensive)))))
+  (testing "counting messages of a class"
+    (is (= 1 (count-messages :offensive)))))
 
 (deftest counting-words
   (add-message! "Um texto" :ok)
@@ -38,5 +38,5 @@
     (let [word (get-word "mensag")]
       (is (= "mensag" (:word word)))
       (is (= 1 (:total word)))
-      (is (= '(:ok) (keys (:categories word))))
-      (is (= 1 (:ok (:categories word)))))))
+      (is (= '(:ok) (keys (:classes word))))
+      (is (= 1 (:ok (:classes word)))))))

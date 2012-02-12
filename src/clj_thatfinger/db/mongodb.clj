@@ -5,21 +5,21 @@
         [clj-thatfinger.stemmer.default-stemmer]))
 
 (defn- update-word!
-  "Updates the statistics of a word according to the category cat."
-  [word cat]
+  "Updates the statistics of a word according to the class cls."
+  [word cls]
   (mongodb/update! :words {:word word}
                    {:$inc {:total 1
-                           (keyword (str "categories." (name cat))) 1}}))
+                           (keyword (str "classes." (name cls))) 1}}))
 
 (defn add-message!
-  "Stores a message indicating its category."
-  [message cat]
+  "Stores a message indicating its class."
+  [message cls]
   (let [words (stem message)]
-    (doall (map #(update-word! % cat) words))
+    (doall (map #(update-word! % cls) words))
     (mongodb/insert! :messages {:message message
                                 :words words
                                 :created-at (Date.)
-                                :category cat})))
+                                :class cls})))
 
 (defn get-word
   "Returns information about a word."
@@ -27,16 +27,14 @@
   (mongodb/fetch-one :words
                      :where {:word word}))
 
-(defn count-messages-of-category
-  "Returns the number of messages of a category cat."
-  [cat]
-  (mongodb/fetch-count :messages
-                       :where {:category cat}))
-
 (defn count-messages
-  "Returns the total number of messages."
-  []
-  (mongodb/fetch-count :messages))
+  "Returns the total number of messages of an optional class cls."
+  ([]
+     (mongodb/fetch-count :messages))
+
+  ([cls]
+     (mongodb/fetch-count :messages
+                          :where {:class cls})))
 
 (defn count-words
   "Returns the total number of words."
@@ -52,7 +50,7 @@
 (defn- ensure-indexes!
   "Creates all necessary MongoDB indexes."
   []
-  (mongodb/add-index! :messages [:category])
+  (mongodb/add-index! :messages [:class])
   (mongodb/add-index! :words [:word] :unique true))
 
 (defn create-connection!

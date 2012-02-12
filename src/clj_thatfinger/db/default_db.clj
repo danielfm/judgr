@@ -5,19 +5,17 @@
 (require ['clj-thatfinger.db [*db-module* :as 'db]])
 
 (defn add-message!
-  "Stores a message indicating its category."
-  [message cat]
-  (db/add-message! message cat))
+  "Stores a message indicating its class."
+  [message cls]
+  (db/add-message! message cls))
 
 (defn get-word
   "Returns information about a word."
-  [word]
-  (db/get-word word))
+  ([]
+     (db/get-word))
 
-(defn count-messages-of-category
-  "Returns the number of messages of a category cat."
-  [cat]
-  (db/count-messages-of-category cat))
+  ([word]
+     (db/get-word word)))
 
 (defn count-messages
   "Returns the total number of messages."
