@@ -16,6 +16,14 @@
   (binding [clj-thatfinger.settings/*smoothing-enabled* false]
     (test-body)))
 
+(def-fixture test-db [& messages]
+  (binding [clj-thatfinger.db.memory-db/*words* (atom {})
+            clj-thatfinger.db.memory-db/*messages* (atom {})]
+    (doall (map #(apply add-message! %) messages))
+    (test-body)))
+
+;; Tests
+
 (deftest smoothing-factor-enabled
   (with-fixture smoothing [1 '(:ok :offensive)]
     (testing "smoothing factor for a category"
@@ -42,3 +50,11 @@
     (with-fixture no-smoothing []
       (is (= 3/100 (prob 3 100)))
       (is (zero? (prob 0 100))))))
+
+(deftest word-probability
+  (with-fixture smoothing [1 '(:ok :offensive)]
+    (with-fixture test-db [["Você é um diabo, mesmo." :ok]
+                           ["Vai pro inferno, diabo!" :offensive]
+                           ["Sua filha é uma diaba, doido." :offensive]]
+      (is (= 2/3 (word-prob "diab" :ok)))
+      (is (= 3/4 (word-prob "diab" :offensive))))))

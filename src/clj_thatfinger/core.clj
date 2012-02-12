@@ -1,5 +1,6 @@
 (ns clj-thatfinger.core
   (:use [clj-thatfinger.db.default-db])
+  (:use [clj-thatfinger.stemmer.default-stemmer])
   (:use [clj-thatfinger.settings]))
 
 (defn cat-factor
@@ -23,7 +24,7 @@
      (+ count-total (total-factor))))
 
 (defn word-prob
-  "Returns the probability of a word to be part of a category cat."
-  [word cat]
+  "Returns the probability of a word to be part of a class cls."
+  [word cls]
   (let [w (get-word word)]
-    (prob (cat (:categories w)) (:total w))))
+    (prob (cls (:classes w)) (count-messages cls))))
