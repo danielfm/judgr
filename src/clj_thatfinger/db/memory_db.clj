@@ -7,22 +7,22 @@
 (def ^:dynamic *words* (atom {}))
 
 (defn module-name
-  ""
+  "Returns a name that describes this module."
   []
   "memory")
 
 (defn get-word
-  ""
+  "Returns information about a word."
   [word]
   (@*words* word))
 
 (defn count-messages
-  ""
+  "Returns the total number of messages of an optional class cls."
   ([]    (count @*messages*))
   ([cls] (count (filter #(= cls (:class %)) (vals @*messages*)))))
 
 (defn count-words
-  ""
+  "Returns the total number of words."
   []
   (count @*words*))
 
@@ -40,7 +40,7 @@
                                             [:classes cls] new-count))))))
 
 (defn add-message!
-  ""
+  "Stores a message indicating its class."
   [message cls]
   (let [words (stem message)]
     (doall (map #(update-word! % cls) words))

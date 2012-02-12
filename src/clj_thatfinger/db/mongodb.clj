@@ -5,7 +5,7 @@
         [clj-thatfinger.stemmer.default-stemmer]))
 
 (defn module-name
-  ""
+  "Returns a name that describes this module."
   []
   "mongodb")
 
