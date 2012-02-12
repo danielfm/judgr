@@ -1,7 +1,14 @@
 (ns clj-thatfinger.settings)
 
+;; Default modules
 (def ^:dynamic *stemmer-module* 'brazilian-stemmer)
 (def ^:dynamic *db-module* 'mongodb)
+
+(def ^:dynamic *classes-count* 2)
+
+;; Smoothing
+(def ^:dynamic *smoothing-enabled* true)
+(def ^:dynamic *smoothing-factor* 1)
 
 ;; MongoDB settings
 (def ^:dynamic *mongodb-database* "thatfinger")
