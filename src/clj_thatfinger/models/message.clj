@@ -1,1 +1,0 @@
-(ns clj-thatfinger.models.message)
