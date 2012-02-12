@@ -76,3 +76,20 @@
                            ["Sua filha é uma diaba, doido." :offensive]]
       (is (= 16/43 (word-class-prob :ok "diab")))
       (is (= 27/43 (word-class-prob :offensive "diab"))))))
+
+(deftest message-class-probability
+  (with-fixture smoothing [1 '(:ok :offensive)]
+    (with-fixture test-db [["Você é um diabo, mesmo." :ok]
+                           ["Vai pro inferno, diabo!" :offensive]
+                           ["Sua filha é uma diaba, doido." :offensive]]
+      (is (= 2187/18275
+             (message-class-prob "Você adora o diabo." :offensive))))))
+
+(deftest message-probabilities
+  (with-fixture smoothing [1 '(:ok :offensive)]
+    (with-fixture test-db [["Você é um diabo, mesmo." :ok]
+                           ["Vai pro inferno, diabo!" :offensive]
+                           ["Sua filha é uma diaba, doido." :offensive]]
+      (is (= {:offensive 19683/237575
+              :ok 8192/237575}
+             (message-probs "Você adora o diabo, filha."))))))

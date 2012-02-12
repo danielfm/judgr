@@ -44,3 +44,14 @@
         total-prob (reduce + (map #(* (word-prob word %)
                                       (class-prob %)) *classes*))]
     (/ prior total-prob)))
+
+(defn message-class-prob
+  "Returns the conditional probability that message s is classified as cls."
+  [s cls]
+  (let [words (stem s)]
+    (reduce * (map #(word-class-prob cls %) words))))
+
+(defn message-probs
+  "Returns the probability for message s for each possible class."
+  [s]
+  (zipmap *classes* (map #(message-class-prob s %) *classes*)))
