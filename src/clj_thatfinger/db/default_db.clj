@@ -4,6 +4,11 @@
 ;; Loads the database module configured in settings
 (require ['clj-thatfinger.db [*db-module* :as 'db]])
 
+(defn module-name
+  ""
+  []
+  (db/module-name))
+
 (defn add-message!
   "Stores a message indicating its class."
   [message cls]
@@ -11,16 +16,13 @@
 
 (defn get-word
   "Returns information about a word."
-  ([]
-     (db/get-word))
-
-  ([word]
-     (db/get-word word)))
+  [word]
+  (db/get-word word))
 
 (defn count-messages
   "Returns the total number of messages."
-  []
-  (db/count-messages))
+  ([] (db/count-messages))
+  ([cls] (db/count-messages cls)))
 
 (defn count-words
   "Returns the total number of words."

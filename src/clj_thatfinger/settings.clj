@@ -2,9 +2,13 @@
 
 ;; Default modules
 (def ^:dynamic *stemmer-module* 'brazilian-stemmer)
-(def ^:dynamic *db-module* 'mongodb)
+(def ^:dynamic *db-module* 'memory-db)
 
-(def ^:dynamic *classes* '(:spam :ham))
+;; All possible classes
+(def ^:dynamic *classes* '(:ok :offensive))
+
+;; Whether probability of any given class is unbiased, e.g., always equal
+(def ^:dynamic *classes-unbiased* false)
 
 ;; Smoothing
 (def ^:dynamic *smoothing-enabled* true)
@@ -14,7 +18,6 @@
 (def ^:dynamic *mongodb-database* "thatfinger")
 (def ^:dynamic *mongodb-host* "127.0.0.1")
 (def ^:dynamic *mongodb-port* 27017)
-
 (def ^:dynamic *mongodb-auth* false)
 (def ^:dynamic *mongodb-username* "")
 (def ^:dynamic *mongodb-password* "")

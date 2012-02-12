@@ -4,6 +4,11 @@
   (:use [clj-thatfinger.settings]
         [clj-thatfinger.stemmer.default-stemmer]))
 
+(defn module-name
+  ""
+  []
+  "mongodb")
+
 (defn- update-word!
   "Updates the statistics of a word according to the class cls."
   [word cls]
