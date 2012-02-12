@@ -14,3 +14,9 @@
   (if *smoothing-enabled*
     (* *smoothing-factor* *classes-count*)
     0))
+
+(defn prob
+  "Returns the probability with smoothing, if it's enabled."
+  [count-cat count-total]
+  (/ (+ count-cat (cat-factor))
+     (+ count-total (total-factor))))
