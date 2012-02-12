@@ -66,3 +66,11 @@
                            ["Sua filha é uma diaba, doido." :offensive]]
       (is (= 2/3 (word-prob "diab" :ok)))
       (is (= 3/4 (word-prob "diab" :offensive))))))
+
+(deftest word-class-probability
+  (with-fixture smoothing [1 '(:ok :offensive)]
+    (with-fixture test-db [["Você é um diabo, mesmo." :ok]
+                           ["Vai pro inferno, diabo!" :offensive]
+                           ["Sua filha é uma diaba, doido." :offensive]]
+      (is (= 16/43 (word-class-prob :ok "diab")))
+      (is (= 27/43 (word-class-prob :offensive "diab"))))))

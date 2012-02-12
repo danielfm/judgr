@@ -11,7 +11,7 @@
     0))
 
 (defn total-factor
-  "Returns the smoothing factory for all categories."
+  "Returns the smoothing factory for all classes."
   []
   (if *smoothing-enabled*
     (* *smoothing-factor* (count *classes*))
@@ -35,3 +35,11 @@
   [word cls]
   (let [w (get-word word)]
     (prob (cls (:classes w)) (count-messages cls))))
+
+(defn word-class-prob
+  "Returns the conditional probability that word appears in messages of class cls."
+  [cls word]
+  (let [prior (* (word-prob word cls) (class-prob cls))
+        total-prob (reduce + (map #(* (word-prob word %)
+                                      (class-prob %)) *classes*))]
+    (/ prior total-prob)))
