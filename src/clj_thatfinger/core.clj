@@ -20,7 +20,7 @@
 (defn prob
   "Returns the probability with smoothing, if it's enabled."
   [count-cat count-total]
-  (/ (+ count-cat (cat-factor))
+  (/ (+ (if (nil? count-cat) 0 count-cat) (cat-factor))
      (+ count-total (total-factor))))
 
 (defn class-prob
@@ -33,8 +33,9 @@
 (defn word-prob
   "Returns the probability of a word to be part of a class cls."
   [word cls]
-  (let [w (get-word word)]
-    (prob (cls (:classes w)) (count-messages cls))))
+  (let [w (get-word word)
+        cls-prob (if-not (nil? w) (cls (:classes w)))]
+    (prob cls-prob (count-messages cls))))
 
 (defn word-class-prob
   "Returns the conditional probability that word appears in messages of class cls."

@@ -44,12 +44,14 @@
   (testing "with smoothing"
     (with-fixture smoothing [1 '(:ok :offensive)]
       (is (= 4/102 (prob 3 100)))
-      (is (= 1/102 (prob 0 100)))))
+      (is (= 1/102 (prob 0 100)))
+      (is (= 1/102 (prob nil 100)))))
 
   (testing "without smoothing"
     (with-fixture no-smoothing []
       (is (= 3/100 (prob 3 100)))
-      (is (zero? (prob 0 100))))))
+      (is (zero? (prob 0 100)))
+      (is (zero? (prob nil 100))))))
 
 (def class-probability
   (with-fixture smoothing [1 '(:ok :offensive)]
