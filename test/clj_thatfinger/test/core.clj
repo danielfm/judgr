@@ -51,6 +51,14 @@
       (is (= 3/100 (prob 3 100)))
       (is (zero? (prob 0 100))))))
 
+(def class-probability
+  (with-fixture smoothing [1 '(:ok :offensive)]
+    (with-fixture test-db [["Você é um diabo, mesmo." :ok]
+                           ["Vai pro inferno, diabo!" :offensive]
+                           ["Sua filha é uma diaba, doido." :offensive]]
+      (is (= 2/5 (class-prob :ok)))
+      (is (= 3/5 (class-prob :offensive))))))
+
 (deftest word-probability
   (with-fixture smoothing [1 '(:ok :offensive)]
     (with-fixture test-db [["Você é um diabo, mesmo." :ok]

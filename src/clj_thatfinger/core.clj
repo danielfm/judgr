@@ -23,6 +23,13 @@
   (/ (+ count-cat (cat-factor))
      (+ count-total (total-factor))))
 
+(defn class-prob
+  "Returns the probability of a message to be part of class cls."
+  [cls]
+  (if *classes-unbiased*
+    (prob 1 (count *classes*))
+    (prob (count-messages cls) (count-messages))))
+
 (defn word-prob
   "Returns the probability of a word to be part of a class cls."
   [word cls]
