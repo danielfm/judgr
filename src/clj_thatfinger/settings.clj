@@ -4,7 +4,7 @@
 (def ^:dynamic *stemmer-module* 'brazilian-stemmer)
 (def ^:dynamic *db-module* 'mongodb)
 
-(def ^:dynamic *classes-count* 2)
+(def ^:dynamic *classes* '(:spam :ham))
 
 ;; Smoothing
 (def ^:dynamic *smoothing-enabled* true)
