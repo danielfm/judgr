@@ -56,33 +56,42 @@
       (is (zero? (prob 0 100)))
       (is (zero? (prob nil 100))))))
 
-(def class-probability
+(deftest prob-of-class-fn
   (with-fixture smoothing []
     (with-fixture test-db []
-      (is (= 2/5 (class-prob :ok)))
-      (is (= 3/5 (class-prob :offensive))))))
+      (testing "probability of :ok class"
+        (is (= 2/5 (prob-of-class :ok))))
 
-(deftest word-probability
+      (testing "probability of :offensive class"
+        (is (= 3/5 (prob-of-class :offensive)))))))
+
+(deftest prob-of-word-fn
   (with-fixture smoothing []
     (with-fixture test-db []
-      (is (= 2/3 (word-prob "diab" :ok)))
-      (is (= 3/4 (word-prob "diab" :offensive))))))
+      (testing "probability of word being :ok"
+        (is (= 2/3 (prob-of-word "diab" :ok))))
 
-(deftest word-class-probability
+      (testing "probability of word being :offensive"
+        (is (= 3/4 (prob-of-word "diab" :offensive)))))))
+
+(deftest posterior-prob-of-word-fn
   (with-fixture smoothing []
     (with-fixture test-db []
-      (is (= 16/43 (word-class-prob :ok "diab")))
-      (is (= 27/43 (word-class-prob :offensive "diab"))))))
+      (testing "posterior probability of :ok given word"
+        (is (= 16/43 (posterior-prob-of-word :ok "diab"))))
 
-(deftest message-class-probability
+      (testing "posterior probability of :offensive given word"
+        (is (= 27/43 (posterior-prob-of-word :offensive "diab")))))))
+
+(deftest posterior-prob-of-message-fn
   (with-fixture smoothing []
     (with-fixture test-db []
-      (is (= 2187/18275
-             (message-class-prob "Você adora o diabo." :offensive))))))
+      (is (= 19683/237575
+             (posterior-prob-of-message "Você adora o diabo, filha." :offensive))))))
 
-(deftest message-probabilities
+(deftest posterior-probs-fn
   (with-fixture smoothing []
     (with-fixture test-db []
       (is (= {:offensive 19683/237575
               :ok 8192/237575}
-             (message-probs "Você adora o diabo, filha."))))))
+             (posterior-probs "Você adora o diabo, filha."))))))

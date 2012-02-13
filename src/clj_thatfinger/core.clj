@@ -23,35 +23,36 @@
   (/ (+ (if (nil? count-cat) 0 count-cat) (cat-factor))
      (+ count-total (total-factor))))
 
-(defn class-prob
+(defn prob-of-class
   "Returns the probability of a message to be part of class cls."
   [cls]
   (if *classes-unbiased*
     (prob 1 (count *classes*))
     (prob (count-messages cls) (count-messages))))
 
-(defn word-prob
+(defn prob-of-word
   "Returns the probability of a word to be part of a class cls."
   [word cls]
   (let [w (get-word word)
         cls-prob (if-not (nil? w) (cls (:classes w)))]
     (prob cls-prob (count-messages cls))))
 
-(defn word-class-prob
-  "Returns the conditional probability that word appears in messages of class cls."
+(defn posterior-prob-of-word
+  "Returns the posterior probability that word appears in messages of class cls."
   [cls word]
-  (let [prior (* (word-prob word cls) (class-prob cls))
-        total-prob (reduce + (map #(* (word-prob word %)
-                                      (class-prob %)) *classes*))]
+  (let [prior (* (prob-of-word word cls) (prob-of-class cls))
+        total-prob (reduce + (map #(* (prob-of-word word %)
+                                      (prob-of-class %)) *classes*))]
     (/ prior total-prob)))
 
-(defn message-class-prob
-  "Returns the conditional probability that message s is classified as cls."
-  [s cls]
-  (let [words (stem s)]
-    (reduce * (map #(word-class-prob cls %) words))))
+(defn posterior-prob-of-message
+  "Returns the posterior probability that message is classified as class cls."
+  [message cls]
+  (let [words (stem message)]
+    (reduce * (map #(posterior-prob-of-word cls %) words))))
 
-(defn message-probs
-  "Returns the probability for message s for each possible class."
-  [s]
-  (zipmap *classes* (map #(message-class-prob s %) *classes*)))
+(defn posterior-probs
+  "Returns the posterior probabilities of message for each possible class."
+  [message]
+  (zipmap *classes* (map #(posterior-prob-of-message message %) *classes*)))
+
