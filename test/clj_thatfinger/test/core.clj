@@ -95,3 +95,8 @@
       (is (= {:offensive 19683/237575
               :ok 8192/237575}
              (posterior-probs "Você adora o diabo, filha."))))))
+
+(deftest class-of-message-fn
+  (with-fixture smoothing []
+    (with-fixture test-db []
+      (is (= :offensive (class-of-message "Você adora o diabo, filha."))))))

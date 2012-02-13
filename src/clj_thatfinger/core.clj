@@ -56,3 +56,8 @@
   [message]
   (zipmap *classes* (map #(posterior-prob-of-message message %) *classes*)))
 
+(defn class-of-message
+  "Returns the class with the highest probability for message."
+  [message]
+  (let [posterior-probs (posterior-probs message)]
+    (first (keys (reverse (sort-by val posterior-probs))))))
