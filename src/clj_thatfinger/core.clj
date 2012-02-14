@@ -62,7 +62,13 @@
   (zipmap *classes* (map #(posterior-prob-of-message message %) *classes*)))
 
 (defn class-of-message
-  "Returns the class with the highest probability for message."
+  "Returns the class with the highest probability for message that passes the
+threshold validation."
   [message]
-  (let [posterior-probs (posterior-probs message)]
-    (first (keys (reverse (sort-by val posterior-probs))))))
+  (let [posterior-probs (reverse (sort-by val (posterior-probs message)))
+        first-prob (first posterior-probs)
+        second-prob (second posterior-probs)
+        threshold ((key first-prob) *classes-threshold*)]
+    (if (> (* (val second-prob) threshold) (val first-prob))
+      *class-unknown*
+      (key first-prob))))

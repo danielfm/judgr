@@ -16,6 +16,11 @@
   (binding [clj-thatfinger.settings/*smoothing-enabled* false]
     (test-body)))
 
+(def-fixture threshold [classes-threshold]
+  (binding [clj-thatfinger.settings/*class-unknown* :unknown
+            clj-thatfinger.settings/*classes-threshold* classes-threshold]
+    (test-body)))
+
 (def-fixture test-db []
   (binding [clj-thatfinger.db.memory-db/*words* (atom {})
             clj-thatfinger.db.memory-db/*messages* (atom {})]
@@ -112,5 +117,9 @@
 (deftest class-of-message-fn
   (with-fixture test-db []
     (with-fixture smoothing []
-      (testing "class with greatest probability without using a threshold"
-        (is (= :offensive (class-of-message "Você adora o diabo, filha.")))))))
+      (testing "class with greatest probability"
+        (is (= :offensive (class-of-message "Você adora o diabo, filha."))))
+
+      (testing "unknown message due to failed threshold validation"
+        (with-fixture threshold [{:offensive 50 :ok 1}]
+          (is (= :unknown (class-of-message "Você adora o diabo, filha."))))))))
