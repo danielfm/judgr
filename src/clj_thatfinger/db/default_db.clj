@@ -5,7 +5,7 @@
 (require ['clj-thatfinger.db [*db-module* :as 'db]])
 
 (defn module-name
-  ""
+  "Returns a name that describes this module."
   []
   (db/module-name))
 
