@@ -35,10 +35,8 @@
 (defn prob-of-word
   "Returns the probability of a word given the message is classified as cls."
   [word cls]
-  (let [w (get-word word)
-        cls-count (count-words)
-        cls-prob (if-not (nil? w) (cls (:classes w)))]
-    (prob cls-prob (count-messages cls) cls-count)))
+  (let [w (get-word word)]
+    (prob (cls (:classes w)) (count-messages cls) (count-words))))
 
 (defn posterior-prob-of-word
   "Returns the probability of cls given word is present."
