@@ -33,14 +33,14 @@
 
 ;; Tests
 
-(deftest cat-factor-fn
+(deftest cls-factor-fn
   (testing "with smoothing"
     (with-fixture smoothing []
-      (is (= 1 (cat-factor)))))
+      (is (= 1 (cls-factor)))))
 
   (testing "without smoothing"
     (with-fixture no-smoothing []
-      (is (zero? (cat-factor))))))
+      (is (zero? (cls-factor))))))
 
 (deftest total-factor-fn
   (testing "with smoothing"

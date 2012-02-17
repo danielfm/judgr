@@ -3,8 +3,8 @@
   (:use [clj-thatfinger.stemmer.default-stemmer])
   (:use [clj-thatfinger.settings]))
 
-(defn cat-factor
-  "Returns the smoothing factor for a category."
+(defn cls-factor
+  "Returns the smoothing factor for a class."
   []
   (if *smoothing-enabled*
     *smoothing-factor*
@@ -19,10 +19,10 @@
 
 (defn prob
   "Returns the weighted probability, if smoothing is enabled."
-  [count-cat count-total cls-count]
-  (let [count-cat (+ (or count-cat 0) (cat-factor))
+  [count-cls count-total cls-count]
+  (let [count-cls (+ (or count-cls 0) (cls-factor))
         count-total (+ (or count-total 0) (total-factor cls-count))]
-    (/ count-cat count-total)))
+    (/ count-cls count-total)))
 
 (defn prob-of-class
   "Returns the weighted probability of a message to be part of class cls."
