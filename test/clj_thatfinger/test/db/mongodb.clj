@@ -18,6 +18,10 @@
 
 (use-fixtures :each test-database)
 
+(deftest add-message-fn
+  (testing "adding message with invalid class"
+    (is (thrown? IllegalArgumentException (add-message! "Uma mensagem" :some-class)))))
+
 (deftest counting-messages
   (add-message! "Outra mensagem" :offensive)
 

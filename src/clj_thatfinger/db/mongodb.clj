@@ -12,9 +12,11 @@
 (defn- update-word!
   "Updates the statistics of a word according to the class cls."
   [word cls]
-  (mongodb/update! :words {:word word}
-                   {:$inc {:total 1
-                           (keyword (str "classes." (name cls))) 1}}))
+  (if (nil? (*classes* cls))
+    (throw (IllegalArgumentException. "Invalid class"))
+    (mongodb/update! :words {:word word}
+                     {:$inc {:total 1
+                             (keyword (str "classes." (name cls))) 1}})))
 
 (defn add-message!
   "Stores a message indicating its class."

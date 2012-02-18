@@ -29,15 +29,18 @@
 (defn- update-word!
   "Updates the statistics of a word according to the class cls."
   [word cls]
-  (let [w (get-word word)]
-    (if (nil? w)
-      (swap! *words* assoc word {:word word
-                                 :total 1
-                                 :classes {cls 1}})
-      (let [cls-count (cls (:classes w))
-            new-count (if (nil? cls-count) 1 (inc cls-count))]
-        (swap! *words* assoc word (assoc-in (assoc w :total (inc (:total w)))
-                                            [:classes cls] new-count))))))
+  (if (nil? (*classes* cls))
+    (throw (IllegalArgumentException. "Invalid class"))
+    (let [w (get-word word)]
+      (if-not (nil? (*classes* cls))
+        (if (nil? w)
+          (swap! *words* assoc word {:word word
+                                     :total 1
+                                     :classes {cls 1}})
+          (let [cls-count (cls (:classes w))
+                new-count (if (nil? cls-count) 1 (inc cls-count))]
+            (swap! *words* assoc word (assoc-in (assoc w :total (inc (:total w)))
+                                                [:classes cls] new-count))))))))
 
 (defn add-message!
   "Stores a message indicating its class."

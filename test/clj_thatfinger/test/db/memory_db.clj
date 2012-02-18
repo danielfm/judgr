@@ -10,6 +10,10 @@
 
 (use-fixtures :each test-database)
 
+(deftest adding-messages
+  (testing "adding message with invalid class"
+    (is (thrown? IllegalArgumentException (add-message! "Uma mensagem" :some-class)))))
+
 (deftest counting-messages
   (add-message! "Outra mensagem" :offensive)
   (testing "counting all messages"
@@ -40,7 +44,7 @@
       (is (= 2 (:ok (:classes word))))))
 
   (testing "start counter for new class"
-    (add-message! "Mais uma mensagem" :maybe)
+    (add-message! "Mais uma mensagem" :offensive)
     (let [word (get-word "mensag")]
-      (is (= '(:maybe :ok) (keys (:classes word))))
-      (is (= 1 (:maybe (:classes word)))))))
+      (is (= '(:offensive :ok) (keys (:classes word))))
+      (is (= 1 (:offensive (:classes word)))))))
