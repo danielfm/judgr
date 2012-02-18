@@ -80,12 +80,18 @@
     (testing "with smoothing"
       (with-fixture smoothing []
         (is (= 1/6 (prob-of-word "diab" :ok)))
-        (is (= 3/14 (prob-of-word "diab" :offensive)))))
+        (is (= 3/14 (prob-of-word "diab" :offensive)))
+
+        (testing "inexistent word"
+          (is (= 1/12 (prob-of-word "lombra" :ok))))))
 
     (testing "without smoothing"
       (with-fixture no-smoothing []
         (is (= 1 (prob-of-word "diab" :ok)))
-        (is (= 2/3 (prob-of-word "diab" :offensive)))))))
+        (is (= 2/3 (prob-of-word "diab" :offensive)))
+
+        (testing "inexistent word"
+          (is (zero? (prob-of-word "lombra" :offensive))))))))
 
 (deftest posterior-prob-of-word-fn
   (with-fixture test-db []
