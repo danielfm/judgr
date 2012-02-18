@@ -8,17 +8,16 @@
 
 (def-fixture smoothing []
   (binding [clj-thatfinger.settings/*smoothing-enabled* true
-            clj-thatfinger.settings/*smoothing-factor* 1
-            clj-thatfinger.settings/*classes* '(:ok :offensive)]
+            clj-thatfinger.settings/*smoothing-factor* 1]
     (test-body)))
 
 (def-fixture no-smoothing []
   (binding [clj-thatfinger.settings/*smoothing-enabled* false]
     (test-body)))
 
-(def-fixture threshold [classes-threshold]
+(def-fixture threshold [classes]
   (binding [clj-thatfinger.settings/*class-unknown* :unknown
-            clj-thatfinger.settings/*classes-threshold* classes-threshold]
+            clj-thatfinger.settings/*classes* classes]
     (test-body)))
 
 (def-fixture test-db []
@@ -121,5 +120,6 @@
         (is (= :offensive (class-of-message "Você adora o diabo, filha."))))
 
       (testing "unknown message due to failed threshold validation"
-        (with-fixture threshold [{:offensive 50 :ok 1}]
+        (with-fixture threshold [{:offensive {:threshold 50}
+                                  :ok {:threshold 1}}]
           (is (= :unknown (class-of-message "Você adora o diabo, filha."))))))))

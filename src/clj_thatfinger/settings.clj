@@ -4,12 +4,9 @@
 (def ^:dynamic *stemmer-module* 'brazilian-stemmer)
 (def ^:dynamic *db-module* 'memory-db)
 
-;; All possible classes
-(def ^:dynamic *classes* '(:ok :offensive))
-
-;; Only flags a message if its probability is at least x times larger than
-;; the next probability
-(def ^:dynamic *classes-threshold* {:ok 1 :offensive 3})
+;; All possible classes and their corresponding thresholds
+(def ^:dynamic *classes* {:ok        {:threshold 1}
+                          :offensive {:threshold 3}})
 
 ;; Messages are flagged with this class when threshold validation fails
 (def ^:dynamic *class-unknown* :unknown)

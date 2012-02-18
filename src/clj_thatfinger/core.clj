@@ -43,7 +43,7 @@
   [cls word]
   (let [prior (* (prob-of-word word cls) (prob-of-class cls))
         total-prob (reduce + (map #(* (prob-of-word word %)
-                                      (prob-of-class %)) *classes*))]
+                                      (prob-of-class %)) (keys *classes*)))]
     (if (zero? total-prob)
       0
       (/ prior total-prob))))
@@ -57,7 +57,8 @@
 (defn posterior-probs
   "Returns the probabilities of message for each possible class."
   [message]
-  (zipmap *classes* (map #(posterior-prob-of-message message %) *classes*)))
+  (let [classes (keys *classes*)]
+    (zipmap classes (map #(posterior-prob-of-message message %) classes))))
 
 (defn class-of-message
   "Returns the class with the highest probability for message that passes the
@@ -66,7 +67,7 @@ threshold validation."
   (let [posterior-probs (reverse (sort-by val (posterior-probs message)))
         first-prob (first posterior-probs)
         second-prob (second posterior-probs)
-        threshold ((key first-prob) *classes-threshold*)]
+        threshold (:threshold ((key first-prob) *classes*))]
     (if (> (* (val second-prob) threshold) (val first-prob))
       *class-unknown*
       (key first-prob))))
