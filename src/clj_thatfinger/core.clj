@@ -70,9 +70,10 @@ threshold validation."
      (classify message *default-subset*))
   ([message subset]
      (let [posterior-probs (reverse (sort-by val (posterior-probs message subset)))
-           first-prob (first posterior-probs)
-           second-prob (second posterior-probs)
-           threshold (:threshold ((key first-prob) *classes*))]
-       (if (> (* (val second-prob) threshold) (val first-prob))
-         *class-unknown*
-         (key first-prob)))))
+           [first-prob second-prob & _]  posterior-probs]
+       (if (or (not *threshold-enabled*)
+               (<= (* (val second-prob)
+                      (-> ((key first-prob) *classes*) :threshold))
+                   (val first-prob)))
+         (key first-prob)
+         *class-unknown*))))

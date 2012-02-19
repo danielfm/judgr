@@ -8,6 +8,10 @@
 (def ^:dynamic *classes* {:ok        {:threshold 1.2}
                           :offensive {:threshold 2.5}})
 
+;; Whether the class with highest probability must pass the threshold
+;; validation test
+(def ^:dynamic *threshold-enabled* true)
+
 ;; Messages are flagged with this class when threshold validation fails
 (def ^:dynamic *class-unknown* :unknown)
 

@@ -24,8 +24,13 @@
     (test-body)))
 
 (def-fixture threshold [classes]
-  (binding [clj-thatfinger.settings/*class-unknown* :unknown
+  (binding [clj-thatfinger.settings/*threshold-enabled* true
+            clj-thatfinger.settings/*class-unknown* :unknown
             clj-thatfinger.settings/*classes* classes]
+    (test-body)))
+
+(def-fixture without-threshold []
+  (binding [clj-thatfinger.settings/*threshold-enabled* false]
     (test-body)))
 
 (def-fixture test-db []

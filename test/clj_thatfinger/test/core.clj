@@ -71,4 +71,8 @@
       (testing "unknown message due to failed threshold validation"
         (with-fixture threshold [{:offensive {:threshold 50}
                                   :ok {:threshold 1}}]
-          (is (= :unknown (classify "Filha do diabo."))))))))
+          (is (= :unknown (classify "Filha do diabo.")))
+
+          (testing "turning off threshold validation"
+            (with-fixture without-threshold []
+              (is (= :offensive (classify "Filha do diabo."))))))))))
