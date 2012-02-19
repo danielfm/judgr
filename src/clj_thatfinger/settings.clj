@@ -18,6 +18,9 @@
 (def ^:dynamic *smoothing-enabled* true)
 (def ^:dynamic *smoothing-factor* 1)
 
+;; Default subset where messages and words are stored in
+(def ^:dynamic *default-subset* :training)
+
 ;; MongoDB settings
 (def ^:dynamic *mongodb-database* "thatfinger")
 (def ^:dynamic *mongodb-host* "127.0.0.1")
