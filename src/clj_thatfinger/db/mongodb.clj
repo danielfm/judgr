@@ -46,6 +46,12 @@ training subset."
      (mongodb/fetch-count :messages
                           :where {subset cls})))
 
+(defn messages-from
+  "Returns all messages from a given training subset."
+  [subset]
+  (mongodb/fetch :messages
+                 :where {subset {:$exists true}}))
+
 (defn count-words
   "Returns the total number of words in the given training subset."
   [subset]

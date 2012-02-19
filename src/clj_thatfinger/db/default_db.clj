@@ -19,6 +19,11 @@
   [word]
   (db/get-word word))
 
+(defn messages-from
+  "Returns all messages from a given training subset."
+  [subset]
+  (db/messages-from subset))
+
 (defn count-messages
   "Returns the total number of messages."
   ([subset] (db/count-messages subset))

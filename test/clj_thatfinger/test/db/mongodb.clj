@@ -47,6 +47,18 @@
   (testing "counting all words"
     (is (= 2 (count-words :training)))))
 
+(deftest messages-from-subset
+  (add-message! "Outra mensagem" :ok :test)
+  (testing "get messages from :training subset"
+    (let [msgs (messages-from :training)]
+      (is (= 1 (count msgs)))
+      (is (= "Uma mensagem" (:message (first msgs))))))
+
+  (testing "get messages from :test subset"
+    (let [msgs (messages-from :test)]
+      (is (= 1 (count msgs)))
+      (is (= "Outra mensagem" (:message (first msgs)))))))
+
 (deftest get-word-fn
   (testing "information about a word"
     (let [word (get-word "mensag")]

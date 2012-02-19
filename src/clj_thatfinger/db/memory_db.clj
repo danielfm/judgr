@@ -16,7 +16,7 @@
   [word]
   (@*words* word))
 
-(defn- messages-from
+(defn messages-from
   "Returns all messages from a given training subset."
   [subset]
   (filter #(contains? (set (keys %)) subset) (vals @*messages*)))
