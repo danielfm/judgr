@@ -17,12 +17,27 @@
     (* *smoothing-factor* cls-count)
     0))
 
+(defn inv-chi-sq
+  "Returns the inverse chi squared with df degrees of freedom."
+  [chi df]
+  (let [m (/ chi 2.0)]
+    (min
+     (reduce +
+             (reductions * (Math/exp (- m)) (for [i (range 1 (/ df 2))] (/ m i))))
+     1.0)))
+
+(defn fisher-prob
+  "Combines a list of independent probabilities into one using Fisher's method."
+  [probs]
+  (inv-chi-sq (* -2 (Math/log (reduce * probs)))
+              (* 2 (count probs))))
+
 (defn prob
   "Returns the weighted probability, if smoothing is enabled."
   [count-cls count-total cls-count]
   (let [count-cls (+ (or count-cls 0) (cls-factor))
         count-total (+ (or count-total 0) (total-factor cls-count))]
-    (/ count-cls count-total)))
+    (float (/ count-cls count-total))))
 
 (defn prob-of-class
   "Returns the weighted probability of a message to be part of class cls."
@@ -46,13 +61,13 @@
                                       (prob-of-class %)) (keys *classes*)))]
     (if (zero? total-prob)
       0
-      (/ prior total-prob))))
+      (float (/ prior total-prob)))))
 
 (defn posterior-prob-of-message
   "Returns the probability that message is classified as class cls."
   [message cls]
   (let [words (stem message)]
-    (reduce * (map #(posterior-prob-of-word cls %) words))))
+    (fisher-prob (map #(posterior-prob-of-word cls %) words))))
 
 (defn posterior-probs
   "Returns the probabilities of message for each possible class."

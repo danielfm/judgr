@@ -2,7 +2,7 @@
   (:use [clj-thatfinger.core])
   (:use [clj-thatfinger.db.default-db])
   (:use [clojure.test])
-  (:use [clj-thatfinger.test.fixtures]))
+  (:use [clj-thatfinger.test.utils]))
 
 ;; Fixtures
 
@@ -53,42 +53,53 @@
 (deftest prob-fn
   (testing "with smoothing"
     (with-fixture smoothing []
-      (is (= 4/102 (prob 3 100 2)))
-      (is (= 1/102 (prob 0 100 2)))
-      (is (= 1/102 (prob nil 100 2)))))
+      (is (float= 4/102 (prob 3 100 2)))
+      (is (float= 1/102 (prob 0 100 2)))
+      (is (float= 1/102 (prob nil 100 2)))))
 
   (testing "without smoothing"
     (with-fixture no-smoothing []
-      (is (= 3/100 (prob 3 100 2)))
+      (is (float= 3/100 (prob 3 100 2)))
       (is (zero? (prob 0 100 2)))
       (is (zero? (prob nil 100 2))))))
+
+(deftest inv-chi-sq-fn
+  (testing "lower distribution of inverse chi squared distribution"
+    (is (float= 0.606 (inv-chi-sq 1 2)))
+    (is (float= 0.082 (inv-chi-sq 5 2)))
+    (is (float= 0.006 (inv-chi-sq 10 2)))))
+
+(deftest fisher-prob-fn
+  (testing "combining probabilities using Fisher's method"
+    (let [probs '(0.03 0.1 0.3)]
+      (is (float= 0.02934 (fisher-prob probs))))))
 
 (deftest prob-of-class-fn
   (with-fixture test-db []
     (testing "with smoothing"
       (with-fixture smoothing []
-        (is (= 1/3 (prob-of-class :ok)))
-        (is (= 2/3 (prob-of-class :offensive)))))
+        (is (float= 1/3 (prob-of-class :ok)))
+        (is (float= 2/3 (prob-of-class :offensive)))))
 
     (testing "without smoothing"
       (with-fixture no-smoothing []
-        (is (= 1/4 (prob-of-class :ok)))
-        (is (= 3/4 (prob-of-class :offensive)))))))
+        (is (float= 1/4 (prob-of-class :ok)))
+        (is (float= 3/4 (prob-of-class :offensive)))))))
 
 (deftest prob-of-word-fn
   (with-fixture test-db []
     (testing "with smoothing"
       (with-fixture smoothing []
-        (is (= 1/6 (prob-of-word "diab" :ok)))
-        (is (= 3/14 (prob-of-word "diab" :offensive)))
+        (is (float= 1/6 (prob-of-word "diab" :ok)))
+        (is (float= 3/14 (prob-of-word "diab" :offensive)))
 
         (testing "inexistent word"
-          (is (= 1/12 (prob-of-word "lombra" :ok))))))
+          (is (float= 1/12 (prob-of-word "lombra" :ok))))))
 
     (testing "without smoothing"
       (with-fixture no-smoothing []
-        (is (= 1 (prob-of-word "diab" :ok)))
-        (is (= 2/3 (prob-of-word "diab" :offensive)))
+        (is (float= 1 (prob-of-word "diab" :ok)))
+        (is (float= 2/3 (prob-of-word "diab" :offensive)))
 
         (testing "inexistent word"
           (is (zero? (prob-of-word "lombra" :offensive))))))))
@@ -97,27 +108,28 @@
   (with-fixture test-db []
     (testing "with smoothing"
       (with-fixture smoothing []
-        (is (= 7/25 (posterior-prob-of-word :ok "diab")))
-        (is (= 18/25 (posterior-prob-of-word :offensive "diab")))))
+        (is (float= 7/25 (posterior-prob-of-word :ok "diab")))
+        (is (float= 18/25 (posterior-prob-of-word :offensive "diab")))))
 
     (testing "without smoothing"
       (with-fixture no-smoothing []
-        (is (= 1/3 (posterior-prob-of-word :ok "diab")))
-        (is (= 2/3 (posterior-prob-of-word :offensive "diab")))))))
+        (is (float= 1/3 (posterior-prob-of-word :ok "diab")))
+        (is (float= 2/3 (posterior-prob-of-word :offensive "diab")))))))
 
 (deftest posterior-prob-of-message-fn
   (with-fixture test-db []
     (with-fixture smoothing []
       (testing "probability of message being :offensive"
-        (is (= 31104/191425
-               (posterior-prob-of-message "Você adora o diabo, filha." :offensive)))))))
+        (is (float= 4137488/4656612
+                    (posterior-prob-of-message "Você adora o diabo, filha." :offensive)))))))
 
 (deftest posterior-probs-fn
   (with-fixture test-db []
     (with-fixture smoothing []
       (testing "probabilities of message for each possible class"
-        (is (= {:offensive 31104/191425 :ok 2401/191425}
-               (posterior-probs "Você adora o diabo, filha.")))))))
+        (let [probs (posterior-probs "Você adora o diabo, filha.")]
+          (is (float= 4137488/4656612 (:offensive probs)))
+          (is (float= 1691229/4656612 (:ok probs))))))))
 
 (deftest class-of-message-fn
   (with-fixture test-db []
