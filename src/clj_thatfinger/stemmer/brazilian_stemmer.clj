@@ -1,8 +1,8 @@
 (ns clj-thatfinger.stemmer.brazilian-stemmer
-  (:import  [org.apache.lucene.analysis.tokenattributes CharTermAttribute])
-  (:import  [org.apache.lucene.analysis.br BrazilianAnalyzer])
-  (:import  [org.apache.lucene.util Version])
-  (:import  [java.io StringReader])
+  (:import  [org.apache.lucene.analysis.tokenattributes CharTermAttribute]
+            [org.apache.lucene.analysis.br BrazilianAnalyzer]
+            [org.apache.lucene.util Version]
+            [java.io StringReader])
   (:require [clojure.string :as str]))
 
 (def analyzer (BrazilianAnalyzer. Version/LUCENE_30))
