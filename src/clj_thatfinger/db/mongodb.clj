@@ -13,11 +13,11 @@
   "Updates the statistics of a word according to the class cls in the given
 training subset."
   [word cls subset]
-  (if (nil? (*classes* cls))
-    (throw (IllegalArgumentException. "Invalid class"))
-    (mongodb/update! :words {:word word}
-                     {:$inc {(str (name subset) ".total") 1
-                             (str (name subset) ".classes." (name cls)) 1}})))
+  (when (nil? (*classes* cls))
+    (throw (IllegalArgumentException. "Invalid class")))
+  (mongodb/update! :words {:word word}
+                   {:$inc {(str (name subset) ".total") 1
+                           (str (name subset) ".classes." (name cls)) 1}}))
 
 (defn add-message!
   "Stores a message indicating its class in the given training subset."
