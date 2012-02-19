@@ -16,38 +16,51 @@
   [word]
   (@*words* word))
 
+(defn- messages-from
+  "Returns all messages from a given training subset."
+  [subset]
+  (filter #(contains? (set (keys %)) subset) (vals @*messages*)))
+
 (defn count-messages
-  "Returns the total number of messages of an optional class cls."
-  ([]    (count @*messages*))
-  ([cls] (count (filter #(= cls (:class %)) (vals @*messages*)))))
+  "Returns the total number of messages of an optional class cls in the given
+training subset."
+  ([subset]     (count (messages-from subset)))
+  ([cls subset] (count (filter #(= (subset %) cls) (vals @*messages*)))))
+
+(defn- words-from
+  "Returns all words from a given training subset."
+  [subset]
+  (filter #(subset %) (vals @*words*)))
 
 (defn count-words
-  "Returns the total number of words."
-  []
-  (count @*words*))
+  "Returns the total number of words in the given training subset."
+  [subset]
+  (count (words-from subset)))
 
 (defn- update-word!
-  "Updates the statistics of a word according to the class cls."
-  [word cls]
+  "Updates the statistics of a word according to the class cls in the given
+training subset."
+  [word cls subset]
   (if (nil? (*classes* cls))
     (throw (IllegalArgumentException. "Invalid class"))
     (let [w (get-word word)]
       (if-not (nil? (*classes* cls))
         (if (nil? w)
           (swap! *words* assoc word {:word word
-                                     :total 1
-                                     :classes {cls 1}})
-          (let [cls-count (cls (:classes w))
-                new-count (if (nil? cls-count) 1 (inc cls-count))]
-            (swap! *words* assoc word (assoc-in (assoc w :total (inc (:total w)))
-                                                [:classes cls] new-count))))))))
+                                     subset {:total 1
+                                             :classes {cls 1}}})
+          (let [total-count (or (-> w subset :total) 0)
+                cls-count (or (-> w subset :classes cls) 0)]
+            (swap! *words* assoc word
+                   (assoc-in (assoc-in w [subset :total] (inc total-count))
+                             [subset :classes cls] (inc cls-count)))))))))
 
 (defn add-message!
-  "Stores a message indicating its class."
-  [message cls]
+  "Stores a message indicating its class in the given training subset."
+  [message cls subset]
   (let [words (stem message)]
-    (doall (map #(update-word! % cls) words))
+    (doall (map #(update-word! % cls subset) words))
     (swap! *messages* assoc message {:message message
                                      :words words
                                      :created-at (Date.)
-                                     :class cls})))
+                                     subset cls})))

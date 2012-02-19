@@ -41,45 +41,45 @@
 
 (defn prob-of-class
   "Returns the weighted probability of a message to be part of class cls."
-  [cls]
+  [cls subset]
   (let [cls-count (count *classes*)]
     (if *classes-unbiased*
       (prob 1 cls-count cls-count)
-      (prob (count-messages cls) (count-messages) cls-count))))
+      (prob (count-messages cls subset) (count-messages subset) cls-count))))
 
 (defn prob-of-word
   "Returns the probability of a word given the message is classified as cls."
-  [word cls]
+  [word cls subset]
   (let [w (get-word word)]
-    (prob (cls (:classes w)) (count-messages cls) (count-words))))
+    (prob (-> w subset :classes cls) (count-messages cls subset) (count-words subset))))
 
 (defn posterior-prob-of-word
   "Returns the probability of cls given word is present."
-  [cls word]
-  (let [prior (* (prob-of-word word cls) (prob-of-class cls))
-        total-prob (reduce + (map #(* (prob-of-word word %)
-                                      (prob-of-class %)) (keys *classes*)))]
+  [cls word subset]
+  (let [prior (* (prob-of-word word cls subset) (prob-of-class cls subset))
+        total-prob (reduce + (map #(* (prob-of-word word % subset)
+                                      (prob-of-class % subset)) (keys *classes*)))]
     (if (zero? total-prob)
       0
       (float (/ prior total-prob)))))
 
 (defn posterior-prob-of-message
   "Returns the probability that message is classified as class cls."
-  [message cls]
+  [message cls subset]
   (let [words (stem message)]
-    (fisher-prob (map #(posterior-prob-of-word cls %) words))))
+    (fisher-prob (map #(posterior-prob-of-word cls % subset) words))))
 
 (defn posterior-probs
   "Returns the probabilities of message for each possible class."
-  [message]
+  [message subset]
   (let [classes (keys *classes*)]
-    (zipmap classes (map #(posterior-prob-of-message message %) classes))))
+    (zipmap classes (map #(posterior-prob-of-message message % subset) classes))))
 
 (defn class-of-message
   "Returns the class with the highest probability for message that passes the
 threshold validation."
-  [message]
-  (let [posterior-probs (reverse (sort-by val (posterior-probs message)))
+  [message subset]
+  (let [posterior-probs (reverse (sort-by val (posterior-probs message subset)))
         first-prob (first posterior-probs)
         second-prob (second posterior-probs)
         threshold (:threshold ((key first-prob) *classes*))]

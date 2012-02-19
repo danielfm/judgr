@@ -23,10 +23,10 @@
 (def-fixture test-db []
   (binding [clj-thatfinger.db.memory-db/*words* (atom {})
             clj-thatfinger.db.memory-db/*messages* (atom {})]
-    (let [messages [["Você é um diabo, mesmo." :ok]
-                    ["Sai de ré, capeta." :offensive]
-                    ["Vai pro inferno, diabo!" :offensive]
-                    ["Sua filha é uma diaba, doido." :offensive]]]
+    (let [messages [["Você é um diabo, mesmo." :ok :training]
+                    ["Sai de ré, capeta." :offensive :training]
+                    ["Vai pro inferno, diabo!" :offensive :training]
+                    ["Sua filha é uma diaba, doido." :offensive :training]]]
       (doall (map #(apply add-message! %) messages)))
     (test-body)))
 
@@ -78,56 +78,56 @@
   (with-fixture test-db []
     (testing "with smoothing"
       (with-fixture smoothing []
-        (is (float= 1/3 (prob-of-class :ok)))
-        (is (float= 2/3 (prob-of-class :offensive)))))
+        (is (float= 1/3 (prob-of-class :ok :training)))
+        (is (float= 2/3 (prob-of-class :offensive :training)))))
 
     (testing "without smoothing"
       (with-fixture no-smoothing []
-        (is (float= 1/4 (prob-of-class :ok)))
-        (is (float= 3/4 (prob-of-class :offensive)))))))
+        (is (float= 1/4 (prob-of-class :ok :training)))
+        (is (float= 3/4 (prob-of-class :offensive :training)))))))
 
 (deftest prob-of-word-fn
   (with-fixture test-db []
     (testing "with smoothing"
       (with-fixture smoothing []
-        (is (float= 1/6 (prob-of-word "diab" :ok)))
-        (is (float= 3/14 (prob-of-word "diab" :offensive)))
+        (is (float= 1/6 (prob-of-word "diab" :ok :training)))
+        (is (float= 3/14 (prob-of-word "diab" :offensive :training)))
 
         (testing "inexistent word"
-          (is (float= 1/12 (prob-of-word "lombra" :ok))))))
+          (is (float= 1/12 (prob-of-word "lombra" :ok :training))))))
 
     (testing "without smoothing"
       (with-fixture no-smoothing []
-        (is (float= 1 (prob-of-word "diab" :ok)))
-        (is (float= 2/3 (prob-of-word "diab" :offensive)))
+        (is (float= 1 (prob-of-word "diab" :ok :training)))
+        (is (float= 2/3 (prob-of-word "diab" :offensive :training)))
 
         (testing "inexistent word"
-          (is (zero? (prob-of-word "lombra" :offensive))))))))
+          (is (zero? (prob-of-word "lombra" :offensive :training))))))))
 
 (deftest posterior-prob-of-word-fn
   (with-fixture test-db []
     (testing "with smoothing"
       (with-fixture smoothing []
-        (is (float= 7/25 (posterior-prob-of-word :ok "diab")))
-        (is (float= 18/25 (posterior-prob-of-word :offensive "diab")))))
+        (is (float= 7/25 (posterior-prob-of-word :ok "diab" :training)))
+        (is (float= 18/25 (posterior-prob-of-word :offensive "diab":training)))))
 
     (testing "without smoothing"
       (with-fixture no-smoothing []
-        (is (float= 1/3 (posterior-prob-of-word :ok "diab")))
-        (is (float= 2/3 (posterior-prob-of-word :offensive "diab")))))))
+        (is (float= 1/3 (posterior-prob-of-word :ok "diab":training)))
+        (is (float= 2/3 (posterior-prob-of-word :offensive "diab" :training)))))))
 
 (deftest posterior-prob-of-message-fn
   (with-fixture test-db []
     (with-fixture smoothing []
       (testing "probability of message being :offensive"
         (is (float= 4112702/4656612
-                    (posterior-prob-of-message "Filha do diabo." :offensive)))))))
+                    (posterior-prob-of-message "Filha do diabo." :offensive :training)))))))
 
 (deftest posterior-probs-fn
   (with-fixture test-db []
     (with-fixture smoothing []
       (testing "probabilities of message for each possible class"
-        (let [probs (posterior-probs "Filha do diabo.")]
+        (let [probs (posterior-probs "Filha do diabo." :training)]
           (is (float= 4112702/4656612 (:offensive probs)))
           (is (float= 11073190/46566128 (:ok probs))))))))
 
@@ -135,9 +135,9 @@
   (with-fixture test-db []
     (with-fixture smoothing []
       (testing "class with greatest probability"
-        (is (= :offensive (class-of-message "Filha do diabo."))))
+        (is (= :offensive (class-of-message "Filha do diabo." :training))))
 
       (testing "unknown message due to failed threshold validation"
         (with-fixture threshold [{:offensive {:threshold 50}
                                   :ok {:threshold 1}}]
-          (is (= :unknown (class-of-message "Filha do diabo."))))))))
+          (is (= :unknown (class-of-message "Filha do diabo." :training))))))))

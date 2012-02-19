@@ -10,23 +10,24 @@
   "mongodb")
 
 (defn- update-word!
-  "Updates the statistics of a word according to the class cls."
-  [word cls]
+  "Updates the statistics of a word according to the class cls in the given
+training subset."
+  [word cls subset]
   (if (nil? (*classes* cls))
     (throw (IllegalArgumentException. "Invalid class"))
     (mongodb/update! :words {:word word}
-                     {:$inc {:total 1
-                             (keyword (str "classes." (name cls))) 1}})))
+                     {:$inc {(str (name subset) ".total") 1
+                             (str (name subset) ".classes." (name cls)) 1}})))
 
 (defn add-message!
-  "Stores a message indicating its class."
-  [message cls]
+  "Stores a message indicating its class in the given training subset."
+  [message cls subset]
   (let [words (stem message)]
-    (doall (map #(update-word! % cls) words))
+    (doall (map #(update-word! % cls subset) words))
     (mongodb/insert! :messages {:message message
                                 :words words
                                 :created-at (Date.)
-                                :class cls})))
+                                subset cls})))
 
 (defn get-word
   "Returns information about a word."
@@ -35,18 +36,21 @@
                      :where {:word word}))
 
 (defn count-messages
-  "Returns the total number of messages of an optional class cls."
-  ([]
-     (mongodb/fetch-count :messages))
-
-  ([cls]
+  "Returns the total number of messages of an optional class cls in the given
+training subset."
+  ([subset]
      (mongodb/fetch-count :messages
-                          :where {:class cls})))
+                          :where {subset {:$exists true}}))
+
+  ([cls subset]
+     (mongodb/fetch-count :messages
+                          :where {subset cls})))
 
 (defn count-words
-  "Returns the total number of words."
-  []
-  (mongodb/fetch-count :words))
+  "Returns the total number of words in the given training subset."
+  [subset]
+  (mongodb/fetch-count :words
+                       :where {subset {:$exists true}}))
 
 (defn- authenticate
   "Authenticates against the specified MongoDB connection."
