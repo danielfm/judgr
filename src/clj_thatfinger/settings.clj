@@ -5,8 +5,8 @@
 (def ^:dynamic *db-module* 'memory-db)
 
 ;; All possible classes and their corresponding thresholds
-(def ^:dynamic *classes* {:ok        {:threshold 1}
-                          :offensive {:threshold 2}})
+(def ^:dynamic *classes* {:ok        {:threshold 1.5}
+                          :offensive {:threshold 2.5}})
 
 ;; Messages are flagged with this class when threshold validation fails
 (def ^:dynamic *class-unknown* :unknown)

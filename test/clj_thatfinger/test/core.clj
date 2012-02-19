@@ -120,24 +120,24 @@
   (with-fixture test-db []
     (with-fixture smoothing []
       (testing "probability of message being :offensive"
-        (is (float= 4137488/4656612
-                    (posterior-prob-of-message "Você adora o diabo, filha." :offensive)))))))
+        (is (float= 4112702/4656612
+                    (posterior-prob-of-message "Filha do diabo." :offensive)))))))
 
 (deftest posterior-probs-fn
   (with-fixture test-db []
     (with-fixture smoothing []
       (testing "probabilities of message for each possible class"
-        (let [probs (posterior-probs "Você adora o diabo, filha.")]
-          (is (float= 4137488/4656612 (:offensive probs)))
-          (is (float= 1691229/4656612 (:ok probs))))))))
+        (let [probs (posterior-probs "Filha do diabo.")]
+          (is (float= 4112702/4656612 (:offensive probs)))
+          (is (float= 11073190/46566128 (:ok probs))))))))
 
 (deftest class-of-message-fn
   (with-fixture test-db []
     (with-fixture smoothing []
       (testing "class with greatest probability"
-        (is (= :offensive (class-of-message "Você adora o diabo, filha."))))
+        (is (= :offensive (class-of-message "Filha do diabo."))))
 
       (testing "unknown message due to failed threshold validation"
         (with-fixture threshold [{:offensive {:threshold 50}
                                   :ok {:threshold 1}}]
-          (is (= :unknown (class-of-message "Você adora o diabo, filha."))))))))
+          (is (= :unknown (class-of-message "Filha do diabo."))))))))
