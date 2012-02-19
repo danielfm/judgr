@@ -24,7 +24,7 @@
 
   (testing "adding message in another subset"
     (add-message! "Uma mensagem" :ok :test)
-    (is (= 1 (count-messages :training)))))
+    (is (= 1 (count-messages :test)))))
 
 (deftest counting-messages
   (add-message! "Outra mensagem" :offensive :training)
@@ -49,6 +49,7 @@
 
 (deftest messages-from-subset
   (add-message! "Outra mensagem" :ok :test)
+
   (testing "get messages from :training subset"
     (let [msgs (messages-from :training)]
       (is (= 1 (count msgs)))

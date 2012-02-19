@@ -12,10 +12,12 @@
 
 (deftest adding-messages
   (testing "adding message with invalid class"
-    (is (thrown? IllegalArgumentException (add-message! "Uma mensagem" :some-class :training)))))
+    (is (thrown? IllegalArgumentException
+                 (add-message! "Uma mensagem" :some-class :training)))))
 
 (deftest counting-messages
   (add-message! "Outra mensagem" :offensive :training)
+
   (testing "counting all messages"
     (is (= 2 (count-messages :training))))
 
