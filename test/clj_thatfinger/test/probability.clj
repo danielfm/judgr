@@ -4,33 +4,24 @@
         [clj-thatfinger.test.utils]
         [clj-thatfinger.test.fixtures]))
 
-(deftest cls-factor-fn
-  (testing "with smoothing"
-    (with-fixture smoothing []
-      (is (= 1 (cls-factor)))))
-
-  (testing "without smoothing"
-    (with-fixture no-smoothing []
-      (is (zero? (cls-factor))))))
-
 (deftest total-factor-fn
   (testing "with smoothing"
-    (with-fixture smoothing []
+    (with-fixture smoothing [1]
       (is (= 2 (total-factor 2)))))
 
   (testing "without smoothing"
-    (with-fixture no-smoothing []
+    (with-fixture smoothing [0]
       (is (zero? (total-factor 2))))))
 
 (deftest prob-fn
   (testing "with smoothing"
-    (with-fixture smoothing []
+    (with-fixture smoothing [1]
       (is (float= 4/102 (prob 3 100 2)))
       (is (float= 1/102 (prob 0 100 2)))
       (is (float= 1/102 (prob nil 100 2)))))
 
   (testing "without smoothing"
-    (with-fixture no-smoothing []
+    (with-fixture smoothing [0]
       (is (float= 3/100 (prob 3 100 2)))
       (is (zero? (prob 0 100 2)))
       (is (zero? (prob nil 100 2))))))

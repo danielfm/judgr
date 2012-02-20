@@ -1,19 +1,10 @@
 (ns clj-thatfinger.probability
   (:use [clj-thatfinger.settings]))
 
-(defn cls-factor
-  "Returns the smoothing factor for a class."
-  []
-  (if *smoothing-enabled*
-    *smoothing-factor*
-    0))
-
 (defn total-factor
   "Returns the smoothing factor for the given class count."
   [cls-count]
-  (if *smoothing-enabled*
-    (* *smoothing-factor* cls-count)
-    0))
+  (* *smoothing-factor* cls-count))
 
 (defn inv-chi-sq
   "Returns the inverse chi squared with df degrees of freedom."
@@ -33,6 +24,6 @@
 (defn prob
   "Returns the weighted probability, if smoothing is enabled."
   [count-cls count-total cls-count]
-  (let [count-cls (+ (or count-cls 0) (cls-factor))
+  (let [count-cls (+ (or count-cls 0) *smoothing-factor*)
         count-total (+ (or count-total 0) (total-factor cls-count))]
     (float (/ count-cls count-total))))

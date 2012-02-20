@@ -19,7 +19,6 @@
 (def ^:dynamic *classes-unbiased* false)
 
 ;; Smoothing used to compensate for unknown words
-(def ^:dynamic *smoothing-enabled* true)
 (def ^:dynamic *smoothing-factor* 1)
 
 ;; Default subset where messages and words are stored in

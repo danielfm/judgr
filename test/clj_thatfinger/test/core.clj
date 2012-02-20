@@ -8,19 +8,19 @@
 (deftest prob-of-class-fn
   (with-fixture test-db []
     (testing "with smoothing"
-      (with-fixture smoothing []
+      (with-fixture smoothing [1]
         (is (float= 1/3 (prob-of-class :ok)))
         (is (float= 2/3 (prob-of-class :offensive)))))
 
     (testing "without smoothing"
-      (with-fixture no-smoothing []
+      (with-fixture smoothing [0]
         (is (float= 1/4 (prob-of-class :ok)))
         (is (float= 3/4 (prob-of-class :offensive)))))))
 
 (deftest prob-of-word-fn
   (with-fixture test-db []
     (testing "with smoothing"
-      (with-fixture smoothing []
+      (with-fixture smoothing [1]
         (is (float= 1/6 (prob-of-word "diab" :ok)))
         (is (float= 3/14 (prob-of-word "diab" :offensive)))
 
@@ -28,7 +28,7 @@
           (is (float= 1/12 (prob-of-word "lombra" :ok))))))
 
     (testing "without smoothing"
-      (with-fixture no-smoothing []
+      (with-fixture smoothing [0]
         (is (float= 1 (prob-of-word "diab" :ok)))
         (is (float= 2/3 (prob-of-word "diab" :offensive)))
 
@@ -38,25 +38,25 @@
 (deftest posterior-prob-of-word-fn
   (with-fixture test-db []
     (testing "with smoothing"
-      (with-fixture smoothing []
+      (with-fixture smoothing [1]
         (is (float= 7/25 (posterior-prob-of-word :ok "diab")))
         (is (float= 18/25 (posterior-prob-of-word :offensive "diab")))))
 
     (testing "without smoothing"
-      (with-fixture no-smoothing []
+      (with-fixture smoothing [0]
         (is (float= 1/3 (posterior-prob-of-word :ok "diab")))
         (is (float= 2/3 (posterior-prob-of-word :offensive "diab")))))))
 
 (deftest posterior-prob-of-message-fn
   (with-fixture test-db []
-    (with-fixture smoothing []
+    (with-fixture smoothing [1]
       (testing "probability of message being :offensive"
         (is (float= 4112702/4656612
                     (posterior-prob-of-message "Filha do diabo." :offensive)))))))
 
 (deftest posterior-probs-fn
   (with-fixture test-db []
-    (with-fixture smoothing []
+    (with-fixture smoothing [1]
       (testing "probabilities of message for each possible class"
         (let [probs (posterior-probs "Filha do diabo.")]
           (is (float= 4112702/4656612 (:offensive probs)))
@@ -64,7 +64,7 @@
 
 (deftest classify-messages
   (with-fixture test-db []
-    (with-fixture smoothing []
+    (with-fixture smoothing [1]
       (testing "class with greatest probability"
         (is (= :offensive (classify "Filha do diabo."))))
 

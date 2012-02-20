@@ -14,13 +14,8 @@
                   ((fn ~largs ~lbody)
                    ~@args))))
 
-(def-fixture smoothing []
-  (binding [clj-thatfinger.settings/*smoothing-enabled* true
-            clj-thatfinger.settings/*smoothing-factor* 1]
-    (test-body)))
-
-(def-fixture no-smoothing []
-  (binding [clj-thatfinger.settings/*smoothing-enabled* false]
+(def-fixture smoothing [factor]
+  (binding [clj-thatfinger.settings/*smoothing-factor* factor]
     (test-body)))
 
 (def-fixture threshold [classes]
