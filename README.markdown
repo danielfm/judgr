@@ -15,7 +15,6 @@ This project is still in early stage of development, so use it at your own risk.
 * Biased and unbiased class probabability
 * Configurable [Laplace Smoothing](http://en.wikipedia.org/wiki/Additive_smoothing)
 * Configurable threshold validation
-* Supports multiple training subsets for cross-validation
 * [MongoDB](http://mongodb.org)-ready
 * RESTful API (soon)
 
@@ -76,7 +75,7 @@ by default.
 To provide your own Porter Stemmer implementation:
 
 1. Implement the required functions in a namespace below `clj-thatfinger.stemmer`.
-   Use `clj-thatfinger.brazilian-stemmer` reference
+   Use `clj-thatfinger.brazilian-stemmer` as reference
 2. Change the `*stemmer-module*` var to point to your namespace
 
 ### Database integration
@@ -93,14 +92,8 @@ change the `*mongodb-<setting>*` vars to point to your MongoDB instance.
 #### Providing Your Own Database Layer
 
 First, implement the required functions in a namespace below `clj-thatfinger.db`.
-Use `clj-thatfinger.db.mongodb` reference. Then, change the `*db-module*` var to
-point to your namespace.
-
-#### About Subsets
-
-As you saw, you can divide your dataset into multiple subsets in order to perform
-cross-validation. The name of the default subset can be changed in
-`*default-subset*` var.
+Use `clj-thatfinger.db.mongodb` as reference. Then, change the `*db-module*` var
+to point to your namespace.
 
 ## License
 

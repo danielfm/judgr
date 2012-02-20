@@ -11,25 +11,20 @@
 
 (defn add-message!
   "Stores a message indicating its class."
-  [message cls subset]
-  (db/add-message! message cls subset))
+  [message cls]
+  (db/add-message! message cls))
 
 (defn get-word
   "Returns information about a word."
   [word]
   (db/get-word word))
 
-(defn messages-from
-  "Returns all messages from a given training subset."
-  [subset]
-  (db/messages-from subset))
-
 (defn count-messages
   "Returns the total number of messages."
-  ([subset] (db/count-messages subset))
-  ([cls subset] (db/count-messages cls subset)))
+  ([] (db/count-messages))
+  ([cls] (db/count-messages cls)))
 
 (defn count-words
   "Returns the total number of words."
-  [subset]
-  (db/count-words subset))
+  []
+  (db/count-words))

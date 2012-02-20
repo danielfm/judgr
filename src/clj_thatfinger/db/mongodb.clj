@@ -10,24 +10,23 @@
   "mongodb")
 
 (defn- update-word!
-  "Updates the statistics of a word according to the class cls in the given
-training subset."
-  [word cls subset]
+  "Updates the statistics of a word according to the class cls."
+  [word cls]
   (when (nil? (*classes* cls))
     (throw (IllegalArgumentException. "Invalid class")))
   (mongodb/update! :words {:word word}
-                   {:$inc {(str (name subset) ".total") 1
-                           (str (name subset) ".classes." (name cls)) 1}}))
+                   {:$inc {:total 1
+                           (str "classes." (name cls)) 1}}))
 
 (defn add-message!
-  "Stores a message indicating its class in the given training subset."
-  [message cls subset]
+  "Stores a message indicating its class."
+  [message cls]
   (let [words (stem message)]
-    (doall (map #(update-word! % cls subset) words))
+    (doall (map #(update-word! % cls) words))
     (mongodb/insert! :messages {:message message
                                 :words words
                                 :created-at (Date.)
-                                subset cls})))
+                                :class cls})))
 
 (defn get-word
   "Returns information about a word."
@@ -36,27 +35,18 @@ training subset."
                      :where {:word word}))
 
 (defn count-messages
-  "Returns the total number of messages of an optional class cls in the given
-training subset."
-  ([subset]
-     (mongodb/fetch-count :messages
-                          :where {subset {:$exists true}}))
+  "Returns the total number of messages of an optional class cls."
+  ([]
+     (mongodb/fetch-count :messages))
 
-  ([cls subset]
+  ([cls]
      (mongodb/fetch-count :messages
-                          :where {subset cls})))
-
-(defn messages-from
-  "Returns all messages from a given training subset."
-  [subset]
-  (mongodb/fetch :messages
-                 :where {subset {:$exists true}}))
+                          :where {:class cls})))
 
 (defn count-words
-  "Returns the total number of words in the given training subset."
-  [subset]
-  (mongodb/fetch-count :words
-                       :where {subset {:$exists true}}))
+  "Returns the total number of words."
+  []
+  (mongodb/fetch-count :words))
 
 (defn- authenticate
   "Authenticates against the specified MongoDB connection."
