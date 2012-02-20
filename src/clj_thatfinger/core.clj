@@ -57,10 +57,6 @@
   ([message cls]
      (train! message cls *default-subset*))
   ([message cls subset]
-     (when (nil? message)
-       (throw (IllegalArgumentException. "Message required")))
-     (when (nil? subset)
-       (throw (IllegalArgumentException. "Subset required")))
      (add-message! message cls subset)))
 
 (defn classify
