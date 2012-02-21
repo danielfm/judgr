@@ -4,4 +4,4 @@
 
 (deftest module-require
   (testing "require module defined in settings"
-    (is (= "memory" (module-name)))))
+    (is (= "mongodb" (memory-module-name)))))
