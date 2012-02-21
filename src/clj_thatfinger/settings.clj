@@ -2,7 +2,7 @@
 
 ;; Default modules
 (def ^:dynamic *stemmer-module* 'brazilian-stemmer)
-(def ^:dynamic *db-module* 'memory-db)
+(def ^:dynamic *db-module* 'mongodb)
 
 ;; All possible classes and their corresponding thresholds
 (def ^:dynamic *classes* {:ok        {:threshold 1.2}
