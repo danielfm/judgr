@@ -71,21 +71,33 @@ level contains predicted classes."
                                  (train-all-partitions-but! i subsets)
                                  (eval-model (nth subsets i))) (range (count subsets)))))))
 
+(defn- apply-to-each-key
+  "Calls (f key map) for each key of map m and returns a hash-map with the
+result for each key."
+  [f m]
+  (apply hash-map (flatten (map #(list % (f % m)) (keys m)))))
+
 (defn precision
   "Calculates the precision of a class based on the given confusion matrix."
-  [cls conf-matrix]
-  (float (/ (-> conf-matrix cls cls)
-            (reduce + (map #(get-in conf-matrix [% cls]) (keys conf-matrix))))))
+  ([conf-matrix]
+     (apply-to-each-key precision conf-matrix))
+  ([cls conf-matrix]
+     (float (/ (-> conf-matrix cls cls)
+               (reduce + (map #(get-in conf-matrix [% cls]) (keys conf-matrix)))))))
 
 (defn recall
   "Calculates the recall of a class based on the given confusion matrix."
-  [cls conf-matrix]
-  (float (/ (-> conf-matrix cls cls)
-            (reduce + (vals (cls conf-matrix))))))
+  ([conf-matrix]
+     (apply-to-each-key recall conf-matrix))
+  ([cls conf-matrix]
+     (float (/ (-> conf-matrix cls cls)
+               (reduce + (vals (cls conf-matrix)))))))
 
 (defn f1-score
   "Calculates the F score of a class based on the given confusion matrix."
-  [cls conf-matrix]
-  (let [prec (precision cls conf-matrix)
-        rec (recall cls conf-matrix)]
-    (* 2 (/ (*  prec rec) (+ prec rec)))))
+  ([conf-matrix]
+     (apply-to-each-key f1-score conf-matrix))
+  ([cls conf-matrix]
+     (let [prec (precision cls conf-matrix)
+           rec (recall cls conf-matrix)]
+       (* 2 (/ (*  prec rec) (+ prec rec))))))

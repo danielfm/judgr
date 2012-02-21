@@ -108,14 +108,35 @@
 (deftest precision-fn
   (with-fixture confusion-matrix []
     (testing "calculate the precision of a class from a confusion matrix"
-      (is (float= 0.86206 (precision :a conf-matrix))))))
+      (is (float= 0.86206 (precision :a conf-matrix))))
+
+    (testing "calculate the precision for all classes in a confusion matrix"
+      (let [prec (precision conf-matrix)]
+        (are [cls cls-prec] (float= cls-prec (cls prec))
+             :a 0.86206
+             :b 0.86486
+             :c 0.71428)))))
 
 (deftest recall-fn
   (with-fixture confusion-matrix []
     (testing "calculate the recall of a class from a confusion matrix"
-      (is (float= 0.78125 (recall :a conf-matrix))))))
+      (is (float= 0.78125 (recall :a conf-matrix))))
+
+    (testing "calculate the recall for all classes in a confusion matrix"
+      (let [rec (recall conf-matrix)]
+        (are [cls cls-rec] (float= cls-rec (cls rec))
+             :a 0.78125
+             :b 0.82051
+             :c 0.9375)))))
 
 (deftest f1-score-fn
   (with-fixture confusion-matrix []
     (testing "calculate F1 score for a class from a confusion matrix"
-      (is (float= 0.81966 (f1-score :a conf-matrix))))))
+      (is (float= 0.81966 (f1-score :a conf-matrix))))
+
+    (testing "calculate F1 score for all classes in a confusion matrix"
+      (let [f1 (f1-score conf-matrix)]
+        (are [cls cls-f1] (float= cls-f1 (cls f1))
+             :a 0.81966
+             :b 0.84210
+             :c 0.81081)))))
