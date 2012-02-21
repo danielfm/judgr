@@ -7,6 +7,11 @@
 
 (def analyzer (BrazilianAnalyzer. Version/LUCENE_30))
 
+(defn stemmer-module-name
+  "Returns a name that describes this module."
+  []
+  "brazilian-stemmer")
+
 (defn remove-repeated-chars
   "Removes long sequences of repeated chars in string s."
   [s]
