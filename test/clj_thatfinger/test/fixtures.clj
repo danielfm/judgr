@@ -1,18 +1,14 @@
 (ns clj-thatfinger.test.fixtures
-  (:use [clj-thatfinger.db.default-db]
-        [clj-thatfinger.test.utils]
-        [clojure.tools.macro]))
+  (:use [clj-thatfinger.test.utils])
+  (:require [somnium.congomongo]
+            [clj-thatfinger.db.memory-db]
+            [clj-thatfinger.db.mongodb]))
 
-(def ^:dynamic *fixtures* (atom {}))
-
-(defmacro def-fixture [name args & body]
-  `(swap! *fixtures* assoc '~name (cons '~args '~body)))
-
-(defmacro with-fixture [name args & body]
-  (let [[largs lbody] (get @*fixtures* name)]
-    `(symbol-macrolet [~'test-body (fn [] ~@body)]
-                  ((fn ~largs ~lbody)
-                   ~@args))))
+(def training-set
+  [["Você é um diabo, mesmo." :ok]
+   ["Sai de ré, capeta." :offensive]
+   ["Vai pro inferno, diabo!" :offensive]
+   ["Sua filha é uma diaba, doido." :offensive]])
 
 (def-fixture smoothing [factor]
   (binding [clj-thatfinger.settings/*smoothing-factor* factor]
@@ -28,12 +24,18 @@
   (binding [clj-thatfinger.settings/*threshold-enabled* false]
     (test-body)))
 
-(def-fixture test-db []
-  (binding [clj-thatfinger.db.memory-db/*words* (atom {})
-            clj-thatfinger.db.memory-db/*messages* (atom {})]
-    (let [messages [["Você é um diabo, mesmo." :ok]
-                    ["Sai de ré, capeta." :offensive]
-                    ["Vai pro inferno, diabo!" :offensive]
-                    ["Sua filha é uma diaba, doido." :offensive]]]
-      (doall (map #(apply train! %) messages)))
+(def-fixture test-memory-db []
+  (binding [clj-thatfinger.settings/*db-module* 'memory-db
+            clj-thatfinger.db.memory-db/*messages* (atom {})
+            clj-thatfinger.db.memory-db/*words* (atom {})]
+    (doall (map #(apply clj-thatfinger.db.memory-db/add-message! %) training-set))
+    (test-body)))
+
+(def-fixture test-mongo-db []
+  (binding [clj-thatfinger.settings/*db-module* 'mongodb
+            clj-thatfinger.settings/*mongodb-database* "thatfinger-test"]
+    (clj-thatfinger.db.mongodb/create-connection!)
+    (somnium.congomongo/destroy! :words {})
+    (somnium.congomongo/destroy! :messages {})
+    (doall (map #(apply clj-thatfinger.db.mongodb/add-message! %) training-set))
     (test-body)))
