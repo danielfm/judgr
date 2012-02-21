@@ -1,47 +1,38 @@
 (ns clj-thatfinger.test.db.memory-db
-  (:use clj-thatfinger.db.memory-db)
-  (:use clojure.test))
-
-(defn test-database [f]
-  (binding [clj-thatfinger.db.memory-db/*words* (atom {})
-            clj-thatfinger.db.memory-db/*messages* (atom {})]
-    (add-message! "Uma mensagem" :ok)
-    (f)))
-
-(use-fixtures :each test-database)
+  (:use [clj-thatfinger.db.memory-db]
+        [clj-thatfinger.test.fixtures]
+        [clj-thatfinger.test.utils]
+        [clojure.test]))
 
 (deftest adding-messages
-  (testing "adding message with invalid class"
-    (is (thrown? IllegalArgumentException
-                 (add-message! "Uma mensagem" :some-class)))))
+  (with-fixture test-memory-db []
+    (testing "adding message with invalid class"
+      (is (thrown? IllegalArgumentException
+                   (add-message! "Uma mensagem" :some-class))))))
 
 (deftest counting-messages
-  (add-message! "Outra mensagem" :offensive)
+  (with-fixture test-memory-db []
+    (testing "counting all messages"
+      (is (= 4 (count-messages))))
 
-  (testing "counting all messages"
-    (is (= 2 (count-messages))))
+     (testing "counting messages of a class"
+       (is (= 3 (count-messages :offensive))))))
 
-  (testing "counting messages of a class"
-    (is (= 1 (count-messages :offensive)))))
-
-(deftest counting-words
-  (add-message! "Um texto" :ok)
-
-  (testing "counting all words"
-    (is (= 2 (count-words)))))
+ (deftest counting-words
+   (with-fixture test-memory-db []
+     (testing "counting all words"
+       (is (= 11 (count-words))))))
 
 (deftest get-word-fn
-  (testing "information about a word"
-    (let [word (get-word "mensag")]
-      (is (= "mensag" (:word word))))))
+  (with-fixture test-memory-db []
+    (testing "information about a word"
+      (let [word (get-word "diab")]
+        (is (= "diab" (:word word)))))))
 
 (deftest get-word-info
-  (add-message! "Sua mensagem" :ok)
-  (add-message! "Outra mensagem" :ok)
-  (add-message! "Mensagem do inferno" :offensive)
-
-  (let [word (get-word "mensag")]
-    (is (= 4 (-> word :total)))
-    (is (= '(:offensive :ok) (-> word :classes keys)))
-    (is (= 3 (-> word :classes :ok)))
-    (is (= 1 (-> word :classes :offensive)))))
+  (with-fixture test-memory-db []
+    (let [word (get-word "diab")]
+      (is (= 3 (-> word :total)))
+      (is (= '(:offensive :ok) (-> word :classes keys)))
+      (is (= 1 (-> word :classes :ok)))
+      (is (= 2 (-> word :classes :offensive))))))
