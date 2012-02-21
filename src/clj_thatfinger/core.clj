@@ -40,8 +40,6 @@
   (let [classes (keys *classes*)]
     (zipmap classes (map #(posterior-prob-of-message message %) classes))))
 
-
-
 (defn train!
   "Labels a message with the given class."
   [message cls]
