@@ -62,10 +62,30 @@ at least two messages in it."
 
 (defn k-fold-cross-validation
   "Performs k-fold cross validation and return a confusion matrix as a map
-of maps."
+of maps, where the first level contains the expected classes and the second
+level contains predicted classes."
   [k]
   (let [subsets (partition-messages k)]
     (memory-db/with-memory-db
       (reduce add-results (map (fn [i]
                                  (train-all-partitions-but! i subsets)
                                  (eval-model (nth subsets i))) (range (count subsets)))))))
+
+(defn precision
+  "Calculates the precision of a class based on the given confusion matrix."
+  [cls conf-matrix]
+  (float (/ (-> conf-matrix cls cls)
+            (reduce + (map #(get-in conf-matrix [% cls]) (keys conf-matrix))))))
+
+(defn recall
+  "Calculates the recall of a class based on the given confusion matrix."
+  [cls conf-matrix]
+  (float (/ (-> conf-matrix cls cls)
+            (reduce + (vals (cls conf-matrix))))))
+
+(defn f1-score
+  "Calculates the F score of a class based on the given confusion matrix."
+  [cls conf-matrix]
+  (let [prec (precision cls conf-matrix)
+        rec (recall cls conf-matrix)]
+    (* 2 (/ (*  prec rec) (+ prec rec)))))

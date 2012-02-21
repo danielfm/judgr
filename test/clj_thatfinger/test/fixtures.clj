@@ -39,3 +39,9 @@
     (somnium.congomongo/destroy! :messages {})
     (doall (map #(apply clj-thatfinger.db.mongodb/add-message! %) training-set))
     (test-body)))
+
+(def-fixture confusion-matrix []
+  (let [conf-matrix {:a {:a 25 :b 5  :c 2}
+                     :b {:a 3  :b 32 :c 4}
+                     :c {:a 1  :b 0  :c 15}}]
+    (test-body)))

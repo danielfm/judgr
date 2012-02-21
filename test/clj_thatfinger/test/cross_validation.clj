@@ -104,3 +104,18 @@
                      {:message "Capeta." :class :offensive})]
           (is (= {:offensive {:offensive 3} :unknown {:unknown 1} :ok {:unknown 1}}
                  (eval-model msgs))))))))
+
+(deftest precision-fn
+  (with-fixture confusion-matrix []
+    (testing "calculate the precision of a class from a confusion matrix"
+      (is (float= 0.86206 (precision :a conf-matrix))))))
+
+(deftest recall-fn
+  (with-fixture confusion-matrix []
+    (testing "calculate the recall of a class from a confusion matrix"
+      (is (float= 0.78125 (recall :a conf-matrix))))))
+
+(deftest f1-score-fn
+  (with-fixture confusion-matrix []
+    (testing "calculate F1 score for a class from a confusion matrix"
+      (is (float= 0.81966 (f1-score :a conf-matrix))))))
