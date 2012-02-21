@@ -6,10 +6,23 @@
 (def ^:dynamic *messages* (atom {}))
 (def ^:dynamic *words* (atom {}))
 
-(defn module-name
+(defmacro with-memory-db
+  "Runs body using an empty in-memory database."
+  [& body]
+  `(binding [clj-thatfinger.settings/*db-module* 'memory-db
+             *messages* (atom {})
+             *words* (atom {})]
+     ~@body))
+
+(defn memory-module-name
   "Returns a name that describes this module."
   []
-  "memory")
+  "memory-db")
+
+(defn get-all-messages
+  "Returns all messages."
+  []
+  (vals @*messages*))
 
 (defn get-word
   "Returns information about a word."

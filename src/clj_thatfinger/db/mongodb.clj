@@ -4,7 +4,7 @@
   (:use [clj-thatfinger.settings]
         [clj-thatfinger.stemmer.default-stemmer]))
 
-(defn module-name
+(defn memory-module-name
   "Returns a name that describes this module."
   []
   "mongodb")
@@ -27,6 +27,11 @@
                                 :words words
                                 :created-at (Date.)
                                 :class cls})))
+
+(defn get-all-messages
+  "Returns all messages."
+  []
+  (mongodb/fetch :messages))
 
 (defn get-word
   "Returns information about a word."
