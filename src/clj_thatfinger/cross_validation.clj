@@ -79,7 +79,7 @@ result for each key."
   (apply hash-map (flatten (map #(list % (f % m)) (keys m)))))
 
 (defn true-positives
-  "Returns the number of true positives of a class or the entire confution
+  "Returns the number of true positives of a class or the entire confusion
 matrix."
   ([conf-matrix]
      (reduce + (vals (apply-to-each-key true-positives conf-matrix))))
@@ -87,7 +87,7 @@ matrix."
      (-> conf-matrix cls cls)))
 
 (defn false-positives
-  "Returns the number of false positives of a class or the entire confution
+  "Returns the number of false positives of a class or the entire confusion
 matrix."
   ([conf-matrix]
      (reduce + (vals (apply-to-each-key false-positives conf-matrix))))
@@ -95,7 +95,7 @@ matrix."
      (reduce + (vals (apply-to-each-key #(get-in %2 [% cls]) (dissoc conf-matrix cls))))))
 
 (defn false-negatives
-  "Returns the number of false negatives of a class or the entire confution
+  "Returns the number of false negatives of a class or the entire confusion
 matrix."
   ([conf-matrix]
      (reduce + (vals (apply-to-each-key false-negatives conf-matrix))))
@@ -105,7 +105,7 @@ matrix."
                              cls)))))
 
 (defn true-negatives
-  "Returns the number of true negatives of a class or the entire confution
+  "Returns the number of true negatives of a class or the entire confusion
 matrix."
   ([conf-matrix]
      (reduce + (vals (apply-to-each-key true-negatives conf-matrix))))
