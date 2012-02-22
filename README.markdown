@@ -63,8 +63,7 @@ We provide a simple implementation for Brazilian Portuguese, based on the work d
 
 To provide your own Porter Stemmer implementation:
 
-1. Implement the required functions in a namespace below `clj-thatfinger.stemmer`. Use `clj-thatfinger.brazilian-stemmer` as reference
-2. Change the `*stemmer-module*` var to point to your namespace
+First, implement the required functions in a namespace of your choice. Use `clj-thatfinger.brazilian-stemmer` as reference. Then, change the `*stemmer-module*` var to point to your namespace.
 
 ### Database integration
 
@@ -78,7 +77,7 @@ To enable MongoDB integration, set the `*db-module*` var to `'mongodb`. Then, ch
 
 #### Providing Your Own Database Layer
 
-First, implement the required functions in a namespace below `clj-thatfinger.db`. Use `clj-thatfinger.db.mongodb` as reference. Then, change the `*db-module*` var to point to your namespace.
+First, implement the required functions in a namespace of your choicei. Use `clj-thatfinger.db.mongodb` as reference. Then, change the `*db-module*` var to point to your namespace.
 
 ## License
 

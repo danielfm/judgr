@@ -1,8 +1,8 @@
 (ns clj-thatfinger.settings)
 
 ;; Default modules
-(def ^:dynamic *stemmer-module* 'brazilian-stemmer)
-(def ^:dynamic *db-module* 'mongodb)
+(def ^:dynamic *stemmer-module* 'clj-thatfinger.stemmer.brazilian-stemmer)
+(def ^:dynamic *db-module* 'clj-thatfinger.db.mongodb)
 
 ;; All possible classes and their corresponding thresholds
 (def ^:dynamic *classes* {:ok        {:threshold 1.2}

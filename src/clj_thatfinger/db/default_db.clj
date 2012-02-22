@@ -1,16 +1,11 @@
 (ns clj-thatfinger.db.default-db
   (:use [clj-thatfinger.settings]))
 
-(defn- module
-  "Returns the symbol that points to the configured db module in settings."
-  []
-  (symbol (str "clj-thatfinger.db." *db-module*)))
-
 (defn- module-fn
   "Resolves a symbol from the configured db module."
   [sym]
-  (apply require [(module)])
-  (ns-resolve (module) sym))
+  (require *db-module*)
+  (ns-resolve *db-module* sym))
 
 (defn memory-module-name
   "Returns a name that describes this module."
