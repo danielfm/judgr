@@ -26,18 +26,18 @@
 
 (def-fixture test-memory-db []
   (binding [clj-thatfinger.settings/*db-module* 'clj-thatfinger.db.memory-db
-            clj-thatfinger.db.memory-db/*messages* (atom {})
-            clj-thatfinger.db.memory-db/*words* (atom {})]
-    (doall (map #(apply clj-thatfinger.db.memory-db/add-message! %) training-set))
+            clj-thatfinger.db.memory-db/*items* (atom {})
+            clj-thatfinger.db.memory-db/*features* (atom {})]
+    (doall (map #(apply clj-thatfinger.db.memory-db/add-item! %) training-set))
     (test-body)))
 
 (def-fixture test-mongo-db []
   (binding [clj-thatfinger.settings/*db-module* 'clj-thatfinger.db.mongodb
             clj-thatfinger.settings/*mongodb-database* "thatfinger-test"]
     (clj-thatfinger.db.mongodb/create-connection!)
-    (somnium.congomongo/destroy! :words {})
-    (somnium.congomongo/destroy! :messages {})
-    (doall (map #(apply clj-thatfinger.db.mongodb/add-message! %) training-set))
+    (somnium.congomongo/destroy! :features {})
+    (somnium.congomongo/destroy! :items {})
+    (doall (map #(apply clj-thatfinger.db.mongodb/add-item! %) training-set))
     (test-body)))
 
 (def-fixture confusion-matrix []

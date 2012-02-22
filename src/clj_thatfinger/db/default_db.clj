@@ -13,33 +13,38 @@
   (let [f (module-fn 'memory-module-name)]
     (f)))
 
-(defn add-message!
-  "Stores a message indicating its class."
-  [message cls]
-  (let [f (module-fn 'add-message!)]
-    (f message cls)))
+(defn add-item!
+  "Stores an item indicating its class."
+  [item class]
+  (let [f (module-fn 'add-item!)]
+    (f item class)))
 
-(defn get-word
-  "Returns information about a word."
-  [word]
-  (let [f (module-fn 'get-word)]
-    (f word)))
+(defn get-feature
+  "Returns information about a feature."
+  [feature]
+  (let [f (module-fn 'get-feature)]
+    (f feature)))
 
-(defn get-all-messages
-  "Returns all messages."
+(defn get-items
+  "Returns all items."
   []
-  (let [f (module-fn 'get-all-messages)]
+  (let [f (module-fn 'get-items)]
     (f)))
 
-(defn count-messages
-  "Returns the total number of messages."
-  ([]
-     (let [f (module-fn 'count-messages)] (f)))
-  ([cls]
-     (let [f (module-fn 'count-messages)] (f cls))))
-
-(defn count-words
-  "Returns the total number of words."
+(defn count-items
+  "Returns the total number of items."
   []
-  (let [f (module-fn 'count-words)]
+  (let [f (module-fn 'count-items)]
+    (f)))
+
+(defn count-items-of
+  "Returns the number of items that belong to a class."
+  [class]
+  (let [f (module-fn 'count-items-of)]
+    (f class)))
+
+(defn count-features
+  "Returns the total number of features."
+  []
+  (let [f (module-fn 'count-features)]
     (f)))

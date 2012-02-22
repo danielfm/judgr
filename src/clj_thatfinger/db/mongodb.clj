@@ -9,49 +9,51 @@
   []
   "mongodb")
 
-(defn- update-word!
-  "Updates the statistics of a word according to the class cls."
-  [word cls]
-  (when (nil? (*classes* cls))
+(defn- update-feature!
+  "Updates the statistics of a feature according to the class."
+  [feature class]
+  (when (nil? (*classes* class))
     (throw (IllegalArgumentException. "Invalid class")))
-  (mongodb/update! :words {:word word}
+  (mongodb/update! :features {:feature feature}
                    {:$inc {:total 1
-                           (str "classes." (name cls)) 1}}))
+                           (str "classes." (name class)) 1}}))
 
-(defn add-message!
-  "Stores a message indicating its class."
-  [message cls]
-  (let [words (stem message)]
-    (doall (map #(update-word! % cls) words))
-    (mongodb/insert! :messages {:message message
-                                :words words
-                                :created-at (Date.)
-                                :class cls})))
+(defn add-item!
+  "Stores an item indicating its class."
+  [item class]
+  (let [features (stem item)]
+    (doall (map #(update-feature! % class) features))
+    (mongodb/insert! :items {:item item
+                             :features features
+                             :created-at (Date.)
+                             :class class})))
 
-(defn get-all-messages
-  "Returns all messages."
+(defn get-items
+  "Returns all items."
   []
-  (mongodb/fetch :messages))
+  (mongodb/fetch :items))
 
-(defn get-word
-  "Returns information about a word."
-  [word]
-  (mongodb/fetch-one :words
-                     :where {:word word}))
+(defn get-feature
+  "Returns information about a feature."
+  [feature]
+  (mongodb/fetch-one :features
+                     :where {:feature feature}))
 
-(defn count-messages
-  "Returns the total number of messages of an optional class cls."
-  ([]
-     (mongodb/fetch-count :messages))
-
-  ([cls]
-     (mongodb/fetch-count :messages
-                          :where {:class cls})))
-
-(defn count-words
-  "Returns the total number of words."
+(defn count-items
+  "Returns the total number of items."
   []
-  (mongodb/fetch-count :words))
+  (mongodb/fetch-count :items))
+
+(defn count-items-of
+  "Returns the number of items that belong to a class."
+  [class]
+  (mongodb/fetch-count :items
+                       :where {:class class}))
+
+(defn count-features
+  "Returns the total number of features."
+  []
+  (mongodb/fetch-count :features))
 
 (defn- authenticate
   "Authenticates against the specified MongoDB connection."
@@ -62,8 +64,8 @@
 (defn- ensure-indexes!
   "Creates all necessary MongoDB indexes."
   []
-  (mongodb/add-index! :messages [:class])
-  (mongodb/add-index! :words [:word] :unique true))
+  (mongodb/add-index! :items [:class])
+  (mongodb/add-index! :features [:feature] :unique true))
 
 (defn create-connection!
   "Creates a connection to MongoDB server."

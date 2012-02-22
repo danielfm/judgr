@@ -4,34 +4,34 @@
         [clj-thatfinger.test.utils]
         [clojure.test]))
 
-(deftest add-message-fn
+(deftest add-item-fn
   (with-fixture test-mongo-db []
-    (testing "adding message with invalid class"
-      (is (thrown? IllegalArgumentException (add-message! "Uma mensagem" :some-class))))))
+    (testing "adding item with invalid class"
+      (is (thrown? IllegalArgumentException (add-item! "Uma mensagem" :some-class))))))
 
-(deftest counting-messages
+(deftest counting-items
   (with-fixture test-mongo-db []
-    (testing "counting all messages"
-      (is (= 4 (count-messages))))
+    (testing "counting all items"
+      (is (= 4 (count-items))))
 
-    (testing "counting messages of a class"
-      (is (= 3 (count-messages :offensive))))))
+    (testing "counting items of a class"
+      (is (= 3 (count-items-of :offensive))))))
 
-(deftest counting-words
+(deftest counting-features
   (with-fixture test-mongo-db []
-    (testing "counting all words"
-      (is (= 11 (count-words))))))
+    (testing "counting all features"
+      (is (= 11 (count-features))))))
 
-(deftest get-word-fn
+(deftest get-feature-fn
   (with-fixture test-mongo-db []
-    (testing "information about a word"
-      (let [word (get-word "diab")]
-        (is (= "diab" (:word word)))))))
+    (testing "information about a feature"
+      (let [feature (get-feature "diab")]
+        (is (= "diab" (:feature feature)))))))
 
-(deftest get-word-info
+(deftest get-feature-info
   (with-fixture test-mongo-db []
-    (let [word (get-word "diab")]
-      (is (= 3 (-> word :total)))
-      (is (= '(:offensive :ok) (-> word :classes keys)))
-      (is (= 1 (-> word :classes :ok)))
-      (is (= 2 (-> word :classes :offensive))))))
+    (let [feature (get-feature "diab")]
+      (is (= 3 (-> feature :total)))
+      (is (= '(:offensive :ok) (-> feature :classes keys)))
+      (is (= 1 (-> feature :classes :ok)))
+      (is (= 2 (-> feature :classes :offensive))))))

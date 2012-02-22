@@ -3,12 +3,12 @@
   (:use [clj-thatfinger.core]
         [clj-thatfinger.db.default-db]))
 
-(defn partition-messages
-  "Partitions all messages into k chunks. Each chunk is guaranteed to have
-at least two messages in it."
+(defn partition-items
+  "Partitions all items into k chunks. Each chunk is guaranteed to have
+at least two items in it."
   [k]
-  (let [count (count-messages)]
-   (partition (max (int (/ count (if (zero? k) 1 k))) 2) (get-all-messages))))
+  (let [count (count-items)]
+   (partition (max (int (/ count (if (zero? k) 1 k))) 2) (get-items))))
 
 (defn remove-nth
   "Remove the nth element of a collection."
@@ -17,19 +17,19 @@ at least two messages in it."
           (drop (inc n) coll)))
 
 (defn train-partition!
-  "Trains the chunk of messages msgs."
-  [msgs]
-  (doall (map #(add-message! (:message %) (keyword (:class %))) msgs)))
+  "Trains the chunk of items."
+  [items]
+  (doall (map #(train! (:item %) (keyword (:class %))) items)))
 
 (defn train-all-partitions-but!
-  "Trains all chunks of messages except the chunk at nth position."
+  "Trains all chunks of items except the chunk at nth position."
   [k msgs]
   (doall (map #(train-partition! %) (remove-nth k msgs))))
 
 (defn expected-predicted-count
   "Returns a map {:expected-class {:predicted-class 1}}."
-  [msg]
-  {(keyword (:class msg)) {(classify (:message msg)) 1}})
+  [item]
+  {(keyword (:class item)) {(classify (:item item)) 1}})
 
 (defn nested-dissoc
   "Dissoc a nested property defined by path from map."
@@ -56,16 +56,16 @@ at least two messages in it."
           :else (recur r1 r2 (conj path (first (keys cur-val)))))))))
 
 (defn eval-model
-  "Evaluates the trained model against the chunk of messages msgs."
-  [msgs]
-  (reduce add-results (map expected-predicted-count msgs)))
+  "Evaluates the trained model against the chunk of items."
+  [items]
+  (reduce add-results (map expected-predicted-count items)))
 
 (defn k-fold-cross-validation
   "Performs k-fold cross validation and return a confusion matrix as a map
 of maps, where the first level contains the expected classes and the second
 level contains predicted classes."
   [k]
-  (let [subsets (partition-messages k)]
+  (let [subsets (partition-items k)]
     (memory-db/with-memory-db
       (reduce add-results (map (fn [i]
                                  (train-all-partitions-but! i subsets)

@@ -5,33 +5,33 @@
         [clj-thatfinger.test.utils]
         [clojure.test]))
 
-(deftest partition-messages-fn
+(deftest partition-items-fn
   (with-fixture test-memory-db []
     (testing "valid partitions"
-      (let [partitions (partition-messages 1)]
+      (let [partitions (partition-items 1)]
         (is (= 1 (count partitions)))
         (is (= '("Sua filha é uma diaba, doido."
                  "Vai pro inferno, diabo!"
                  "Sai de ré, capeta."
                  "Você é um diabo, mesmo.")
-               (map :message (first partitions))))))
+               (map :item (first partitions))))))
 
     (testing "partition into zero subsets"
-      (let [partitions (partition-messages 0)]
+      (let [partitions (partition-items 0)]
         (is (= 1 (count partitions)))
         (is (= '("Sua filha é uma diaba, doido."
                  "Vai pro inferno, diabo!"
                  "Sai de ré, capeta."
                  "Você é um diabo, mesmo.")
-               (map :message (first partitions))))))
+               (map :item (first partitions))))))
 
     (testing "partition into too many subsets"
-      (let [partitions (partition-messages 5)]
+      (let [partitions (partition-items 5)]
         (is (= 2 (count partitions)))
         (is (= '("Sua filha é uma diaba, doido." "Vai pro inferno, diabo!")
-               (map :message (first partitions))))
+               (map :item (first partitions))))
         (is (= '("Sai de ré, capeta." "Você é um diabo, mesmo.")
-               (map :message (second partitions))))))))
+               (map :item (second partitions))))))))
 
 (deftest remove-nth-fn
   (testing "remove the nth element from a collection"
@@ -42,31 +42,31 @@
 
 (deftest train-partition-fn
   (with-fixture test-memory-db []
-    (testing "train another batch of messages"
-      (is (= 4 (count-messages)))
-      (train-partition! '({:message "Tudo bem?"  :class :ok}
-                          {:message "Maravilha." :class :ok}))
-      (is (= 6 (count-messages))))))
+    (testing "train another batch of items"
+      (is (= 4 (count-items)))
+      (train-partition! '({:item "Tudo bem?"  :class :ok}
+                          {:item "Maravilha." :class :ok}))
+      (is (= 6 (count-items))))))
 
 (deftest train-all-partitions-but-fn
   (with-fixture test-memory-db []
     (testing "train all but the nth partition"
-      (let [partitions '(({:message "Tudo bem?"  :class :ok}
-                          {:message "Maravilha." :class :ok})
-                         ({:message "Tudo ok?"   :class :ok}))]
+      (let [partitions '(({:item "Tudo bem?"  :class :ok}
+                          {:item "Maravilha." :class :ok})
+                         ({:item "Tudo ok?"   :class :ok}))]
         (train-all-partitions-but! 0 partitions)
-        (is (= 5 (count-messages)))))))
+        (is (= 5 (count-items)))))))
 
 (deftest expected-predicted-count-fn
   (with-fixture threshold [{:ok {:threshold 1.2} :offensive {:threshold 2.5}}]
     (with-fixture test-memory-db []
       (testing "expected-predicted count map when prediction matches"
         (is (= {:offensive {:offensive 1}}
-               (expected-predicted-count {:message "Lugar de diabo é no inferno." :class :offensive}))))
+               (expected-predicted-count {:item "Lugar de diabo é no inferno." :class :offensive}))))
 
       (testing "expected-predicted count map when prediction doesn't match"
         (is (= {:ok {:offensive 1}}
-               (expected-predicted-count {:message "Lugar de diabo é no inferno." :class :ok})))))))
+               (expected-predicted-count {:item "Lugar de diabo é no inferno." :class :ok})))))))
 
 (deftest nested-dissoc-fn
   (let [a-map {:a 1 :b 2 :c {:d 3}}]
@@ -96,12 +96,12 @@
 (deftest eval-model-fn
   (with-fixture threshold [{:ok {:threshold 1.2} :offensive {:threshold 2.5}}]
     (with-fixture test-memory-db []
-      (testing "evaluate a trained model against new messages"
-        (let [msgs '({:message "Oi mesmo..." :class :ok} ;; predicted as unknown
-                     {:message "Sou eu mesmo!" :class :unknown}
-                     {:message "Vai seu diabo dos infernos" :class :offensive}
-                     {:message "Filha do diabo!" :class :offensive}
-                     {:message "Capeta." :class :offensive})]
+      (testing "evaluate a trained model against new items"
+        (let [msgs '({:item "Oi mesmo..." :class :ok} ;; predicted as unknown
+                     {:item "Sou eu mesmo!" :class :unknown}
+                     {:item "Vai seu diabo dos infernos" :class :offensive}
+                     {:item "Filha do diabo!" :class :offensive}
+                     {:item "Capeta." :class :offensive})]
           (is (= {:offensive {:offensive 3} :unknown {:unknown 1} :ok {:unknown 1}}
                  (eval-model msgs))))))))
 

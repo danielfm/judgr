@@ -3,72 +3,70 @@
   (:use [clj-thatfinger.settings]
         [clj-thatfinger.stemmer.default-stemmer]))
 
-(def ^:dynamic *messages* (atom {}))
-(def ^:dynamic *words* (atom {}))
-
-(defmacro with-memory-db
-  "Runs body using an empty in-memory database."
-  [& body]
-  `(binding [clj-thatfinger.settings/*db-module* 'memory-db
-             *messages* (atom {})
-             *words* (atom {})]
-     ~@body))
+(def ^:dynamic *items* (atom {}))
+(def ^:dynamic *features* (atom {}))
 
 (defn memory-module-name
   "Returns a name that describes this module."
   []
   "memory-db")
 
-(defn get-all-messages
-  "Returns all messages."
+(defn get-items
+  "Returns all items."
   []
-  (vals @*messages*))
+  (vals @*items*))
 
-(defn get-word
-  "Returns information about a word."
-  [word]
-  (@*words* word))
+(defn get-feature
+  "Returns information about a feature."
+  [feature]
+  (@*features* feature))
 
-(defn messages-from
-  "Returns all messages."
+(defn count-items
+  "Returns the total number of items."
   []
-  (filter #(contains? (set (keys %))) (vals @*messages*)))
+  (count @*items*))
 
-(defn count-messages
-  "Returns the total number of messages of an optional class cls."
-  ([]
-     (count @*messages*))
-  ([cls]
-     (count (filter #(= (:class %) cls) (vals @*messages*)))))
+(defn count-items-of
+  "Returns the number of items that belong to a class."
+  [class]
+  (count (filter #(= (:class %) class) (vals @*items*))))
 
-(defn count-words
-  "Returns the total number of words."
+(defn count-features
+  "Returns the total number of features."
   []
-  (count @*words*))
+  (count @*features*))
 
-(defn- update-word!
-  "Updates the statistics of a word according to the class cls."
-  [word cls]
-  (if (nil? (*classes* cls))
+(defn- update-feature!
+  "Updates the statistics of a feature according to the class."
+  [feature class]
+  (if (nil? (*classes* class))
     (throw (IllegalArgumentException. "Invalid class"))
-    (let [w (get-word word)]
-      (if-not (nil? (*classes* cls))
-        (if (nil? w)
-          (swap! *words* assoc word {:word word
-                                     :total 1
-                                     :classes {cls 1}})
-          (let [total-count (or (-> w :total) 0)
-                cls-count (or (-> w :classes cls) 0)]
-            (swap! *words* assoc word
-                   (assoc-in (assoc w :total (inc total-count))
-                             [:classes cls] (inc cls-count)))))))))
+    (let [f (get-feature feature)]
+      (if-not (nil? (*classes* class))
+        (if (nil? f)
+          (swap! *features* assoc feature {:feature feature
+                                           :total 1
+                                           :classes {class 1}})
+          (let [total-count (or (-> f :total) 0)
+                class-count (or (-> f :classes class) 0)]
+            (swap! *features* assoc feature
+                   (assoc-in (assoc f :total (inc total-count))
+                             [:classes class] (inc class-count)))))))))
 
-(defn add-message!
-  "Stores a message indicating its class."
-  [message cls]
-  (let [words (stem message)]
-    (doall (map #(update-word! % cls) words))
-    (swap! *messages* assoc message {:message message
-                                     :words words
-                                     :created-at (Date.)
-                                     :class cls})))
+(defn add-item!
+  "Stores an item indicating its class."
+  [item class]
+  (let [features (stem item)]
+    (doall (map #(update-feature! % class) features))
+    (swap! *items* assoc item {:item item
+                               :features features
+                               :created-at (Date.)
+                               :class class})))
+
+(defmacro with-memory-db
+  "Runs body using an empty in-memory database."
+  [& body]
+  `(binding [clj-thatfinger.settings/*db-module* 'memory-db
+             *items* (atom {})
+             *features* (atom {})]
+     ~@body))
