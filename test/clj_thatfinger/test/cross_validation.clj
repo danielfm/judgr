@@ -105,38 +105,47 @@
           (is (= {:offensive {:offensive 3} :unknown {:unknown 1} :ok {:unknown 1}}
                  (eval-model msgs))))))))
 
+(deftest true-positives-fn
+  (with-fixture confusion-matrix []
+    (testing "get the true positive count of a given class from a confusion matrix"
+      (is (= 25 (true-positive :a conf-matrix))))))
+
+(deftest false-positive-fn
+  (with-fixture confusion-matrix []
+    (testing "get false positives of a class from a confusion matrix"
+      (is (= 4 (false-positive :a conf-matrix))))))
+
+(deftest false-negative-fn
+  (with-fixture confusion-matrix []
+    (testing "get false negatives of a class from a confusion matrix"
+      (is (= 7 (false-negative :a conf-matrix))))))
+
+(deftest true-negative-fn
+  (with-fixture confusion-matrix []
+    (testing "get true negatives of a class from a confusion matrix"
+      (is (= 51 (true-negative :a conf-matrix))))))
+
 (deftest precision-fn
   (with-fixture confusion-matrix []
     (testing "calculate the precision of a class from a confusion matrix"
-      (is (float= 0.86206 (precision :a conf-matrix))))
-
-    (testing "calculate the precision for all classes in a confusion matrix"
-      (let [prec (precision conf-matrix)]
-        (are [cls cls-prec] (float= cls-prec (cls prec))
-             :a 0.86206
-             :b 0.86486
-             :c 0.71428)))))
+      (is (float= 0.82758 (precision conf-matrix))))))
 
 (deftest recall-fn
   (with-fixture confusion-matrix []
     (testing "calculate the recall of a class from a confusion matrix"
-      (is (float= 0.78125 (recall :a conf-matrix))))
+      (is (float= 0.82758 (recall conf-matrix))))))
 
-    (testing "calculate the recall for all classes in a confusion matrix"
-      (let [rec (recall conf-matrix)]
-        (are [cls cls-rec] (float= cls-rec (cls rec))
-             :a 0.78125
-             :b 0.82051
-             :c 0.9375)))))
+(deftest specificity-fn
+  (with-fixture confusion-matrix []
+    (testing "calculate the specificity of a class from a confusion matrix"
+      (is (float= 0.91379 (specificity conf-matrix))))))
+
+(deftest accuracy-fn
+  (with-fixture confusion-matrix []
+    (testing "calculate the accuracy from a confusion matrix"
+      (is (float= 0.88505 (accuracy conf-matrix))))))
 
 (deftest f1-score-fn
   (with-fixture confusion-matrix []
     (testing "calculate F1 score for a class from a confusion matrix"
-      (is (float= 0.81966 (f1-score :a conf-matrix))))
-
-    (testing "calculate F1 score for all classes in a confusion matrix"
-      (let [f1 (f1-score conf-matrix)]
-        (are [cls cls-f1] (float= cls-f1 (cls f1))
-             :a 0.81966
-             :b 0.84210
-             :c 0.81081)))))
+      (is (float= 0.82758 (f1-score conf-matrix))))))

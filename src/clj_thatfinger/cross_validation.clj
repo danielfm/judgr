@@ -69,7 +69,8 @@ level contains predicted classes."
     (memory-db/with-memory-db
       (reduce add-results (map (fn [i]
                                  (train-all-partitions-but! i subsets)
-                                 (eval-model (nth subsets i))) (range (count subsets)))))))
+                                 (eval-model (nth subsets i)))
+                               (range (count subsets)))))))
 
 (defn- apply-to-each-key
   "Calls (f key map) for each key of map m and returns a hash-map with the
@@ -77,27 +78,78 @@ result for each key."
   [f m]
   (apply hash-map (flatten (map #(list % (f % m)) (keys m)))))
 
-(defn precision
-  "Calculates the precision of a class based on the given confusion matrix."
+(defn true-positives
+  "Returns the number of true positives of a class or the entire confution
+matrix."
   ([conf-matrix]
-     (apply-to-each-key precision conf-matrix))
+     (reduce + (vals (apply-to-each-key true-positives conf-matrix))))
   ([cls conf-matrix]
-     (float (/ (-> conf-matrix cls cls)
-               (reduce + (map #(get-in conf-matrix [% cls]) (keys conf-matrix)))))))
+     (-> conf-matrix cls cls)))
+
+(defn false-positives
+  "Returns the number of false positives of a class or the entire confution
+matrix."
+  ([conf-matrix]
+     (reduce + (vals (apply-to-each-key false-positives conf-matrix))))
+  ([cls conf-matrix]
+     (reduce + (vals (apply-to-each-key #(get-in %2 [% cls]) (dissoc conf-matrix cls))))))
+
+(defn false-negatives
+  "Returns the number of false negatives of a class or the entire confution
+matrix."
+  ([conf-matrix]
+     (reduce + (vals (apply-to-each-key false-negatives conf-matrix))))
+  ([cls conf-matrix]
+     (reduce + (vals (dissoc (apply-to-each-key #(get-in %2 [cls %])
+                                                (nested-dissoc conf-matrix [cls cls]))
+                             cls)))))
+
+(defn true-negatives
+  "Returns the number of true negatives of a class or the entire confution
+matrix."
+  ([conf-matrix]
+     (reduce + (vals (apply-to-each-key true-negatives conf-matrix))))
+  ([cls conf-matrix]
+     (reduce + (vals (apply concat (map #(dissoc (val %) cls) (dissoc conf-matrix cls)))))))
+
+(defn precision
+  "Calculates the precision of a confusion matrix, which is the percentage of
+positive predictions that are correct."
+  [conf-matrix]
+  (let [tp (true-positives conf-matrix)
+        fp (false-positives conf-matrix)]
+    (float (/ tp (+ tp fp)))))
 
 (defn recall
-  "Calculates the recall of a class based on the given confusion matrix."
-  ([conf-matrix]
-     (apply-to-each-key recall conf-matrix))
-  ([cls conf-matrix]
-     (float (/ (-> conf-matrix cls cls)
-               (reduce + (vals (cls conf-matrix)))))))
+  "Calculates the recall of a confusion matrix, which is the percentage of positive
+labeled instances that were predicted as positive."
+  [conf-matrix]
+  (let [tp (true-positives conf-matrix)
+        fn (false-negatives conf-matrix)]
+    (float (/ tp (+ tp fn)))))
+
+(defn specificity
+  "Calculates the specificity of a confusion matrix, which is the percentage of
+negative labeled instances that were predicted as negative."
+  [conf-matrix]
+  (let [tn (true-negatives conf-matrix)
+        fp (false-positives conf-matrix)]
+    (float (/ tn (+ tn fp)))))
+
+(defn accuracy
+  "Calculates the accuracy of a confusion matrix, which is the percentage of
+predictions that are correct."
+  [conf-matrix]
+  (let [tp (true-positives conf-matrix)
+        tn (true-negatives conf-matrix)
+        fp (false-positives conf-matrix)
+        fn (false-negatives conf-matrix)]
+    (float (/ (+ tp tn) (+ tp tn fp fn)))))
 
 (defn f1-score
-  "Calculates the F score of a class based on the given confusion matrix."
-  ([conf-matrix]
-     (apply-to-each-key f1-score conf-matrix))
-  ([cls conf-matrix]
-     (let [prec (precision cls conf-matrix)
-           rec (recall cls conf-matrix)]
-       (* 2 (/ (*  prec rec) (+ prec rec))))))
+  "Calculates the F1 score of a confusion matrix, which is a weighted average
+of the precision and recall."
+  [conf-matrix]
+  (let [prec (precision conf-matrix)
+        rec (recall conf-matrix)]
+    (float (* 2 (/ (*  prec rec) (+ prec rec))))))
