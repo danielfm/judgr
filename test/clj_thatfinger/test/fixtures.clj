@@ -11,7 +11,13 @@
    ["Sua filha é uma diaba, doido." :offensive]])
 
 (def-fixture smoothing [factor]
-  (binding [clj-thatfinger.settings/*smoothing-factor* factor]
+  (binding [clj-thatfinger.settings/*smoothing-factor* factor
+            clj-thatfinger.settings/*classes-unbiased* false]
+    (test-body)))
+
+(def-fixture unbiased [b]
+  (binding [clj-thatfinger.settings/*smoothing-factor* 1
+            clj-thatfinger.settings/*classes-unbiased* b]
     (test-body)))
 
 (def-fixture threshold [classes]

@@ -9,7 +9,7 @@
   [class]
   (let [class-count (count *classes*)]
     (if *classes-unbiased*
-      (prob 1 class-count 0)
+      (float (/ 1 class-count))
       (prob (count-items-of class) (count-items) class-count))))
 
 (defn prob-of-feature

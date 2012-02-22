@@ -14,7 +14,12 @@
     (testing "without smoothing"
       (with-fixture smoothing [0]
         (is (float= 1/4 (prob-of-class :ok)))
-        (is (float= 3/4 (prob-of-class :offensive)))))))
+        (is (float= 3/4 (prob-of-class :offensive)))))
+
+    (testing "unbiased probability"
+      (with-fixture unbiased [true]
+        (is (float= 1/2 (prob-of-class :ok)))
+        (is (float= 1/2 (prob-of-class :offensive)))))))
 
 (deftest prob-of-feature-fn
   (with-fixture test-memory-db []
