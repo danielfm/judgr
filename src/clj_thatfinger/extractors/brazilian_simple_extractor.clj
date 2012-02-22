@@ -1,4 +1,4 @@
-(ns clj-thatfinger.stemmer.brazilian-stemmer
+(ns clj-thatfinger.extractors.brazilian-simple-extractor
   (:import  [org.apache.lucene.analysis.tokenattributes CharTermAttribute]
             [org.apache.lucene.analysis.br BrazilianAnalyzer]
             [org.apache.lucene.util Version]
@@ -7,18 +7,18 @@
 
 (def analyzer (BrazilianAnalyzer. Version/LUCENE_30))
 
-(defn stemmer-module-name
+(defn extractor-module-name
   "Returns a name that describes this module."
   []
-  "brazilian-stemmer")
+  "brazilian-simple-extractor")
 
 (defn remove-repeated-chars
   "Removes long sequences of repeated chars in string s."
   [s]
   (str/replace s #"(\w)\1{2,}" "$1$1"))
 
-(defn stem
-  "Returns a set with the stemming output for string s."
+(defn extract-features
+  "Returns a set of features extracted from string s."
   [s]
   (let [stream (.tokenStream analyzer "text" (StringReader. (remove-repeated-chars s)))]
     (loop [tokens []]

@@ -51,19 +51,19 @@ You can change the `*smoothing-factor*` var to change the smoothing intensity, a
 
 Although it's not recommended, you can turn smoothing off by setting the `*smoothing-factor*` var to zero.
 
-### Porter Stemmer
-
-The Porter stemming algorithm (or Porter stemmer) is a process for removing the commoner morphological and inflexional endings from words. Its main use is as part of a term normalisation process.
+### Feature extraction
 
 #### Brazilian Portuguese
 
-We provide a simple implementation for Brazilian Portuguese, based on the work done in [Apache Lucene](http://lucene.apache.org/core/), which is enabled by default.
+We provide a simple implementation for Brazilian Portuguese, a porter stemmer actually, based on the work done in [Apache Lucene](http://lucene.apache.org/core/), which is enabled by default.
 
-#### Providing Your Own Porter Stemmer
+The Porter stemming is a process for removing the commoner morphological and inflexional endings from words. Its main use is as part of a term normalisation process.
 
-To provide your own Porter Stemmer implementation:
+#### Providing Your Own Feature Extractor
 
-First, implement the required functions in a namespace of your choice. Use `clj-thatfinger.brazilian-stemmer` as reference. Then, change the `*stemmer-module*` var to point to your namespace.
+To provide your own feature extraction implementation:
+
+First, implement the required functions in a namespace of your choice. Use `clj-thatfinger.extractors.brazilian-simple-extractor` as reference. Then, change the `*extractor-module*` var to point to your namespace.
 
 ### Database integration
 

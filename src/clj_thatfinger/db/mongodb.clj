@@ -2,7 +2,7 @@
   (:import [java.util Date])
   (:require [somnium.congomongo :as mongodb])
   (:use [clj-thatfinger.settings]
-        [clj-thatfinger.stemmer.default-stemmer]))
+        [clj-thatfinger.extractors.default-extractor]))
 
 (defn memory-module-name
   "Returns a name that describes this module."
@@ -21,7 +21,7 @@
 (defn add-item!
   "Stores an item indicating its class."
   [item class]
-  (let [features (stem item)]
+  (let [features (extract-features item)]
     (doall (map #(update-feature! % class) features))
     (mongodb/insert! :items {:item item
                              :features features

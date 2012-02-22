@@ -1,7 +1,7 @@
 (ns clj-thatfinger.core
   (:use [clj-thatfinger.probability]
         [clj-thatfinger.db.default-db]
-        [clj-thatfinger.stemmer.default-stemmer]
+        [clj-thatfinger.extractors.default-extractor]
         [clj-thatfinger.settings]))
 
 (defn prob-of-class
@@ -31,8 +31,8 @@
 (defn posterior-prob-of-item
   "Returns the probability that item is classified as class."
   [item class]
-  (let [items (stem item)]
-    (fisher-prob (map #(posterior-prob-of-feature class %) items))))
+  (let [features (extract-features item)]
+    (fisher-prob (map #(posterior-prob-of-feature class %) features))))
 
 (defn posterior-probs
   "Returns the probabilities of item for each possible class."

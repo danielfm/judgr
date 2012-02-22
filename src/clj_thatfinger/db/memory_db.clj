@@ -1,7 +1,7 @@
 (ns clj-thatfinger.db.memory-db
   (:import [java.util Date])
   (:use [clj-thatfinger.settings]
-        [clj-thatfinger.stemmer.default-stemmer]))
+        [clj-thatfinger.extractors.default-extractor]))
 
 (def ^:dynamic *items* (atom {}))
 (def ^:dynamic *features* (atom {}))
@@ -56,7 +56,7 @@
 (defn add-item!
   "Stores an item indicating its class."
   [item class]
-  (let [features (stem item)]
+  (let [features (extract-features item)]
     (doall (map #(update-feature! % class) features))
     (swap! *items* assoc item {:item item
                                :features features
