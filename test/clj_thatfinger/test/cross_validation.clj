@@ -108,22 +108,22 @@
 (deftest true-positives-fn
   (with-fixture confusion-matrix []
     (testing "get the true positive count of a given class from a confusion matrix"
-      (is (= 25 (true-positive :a conf-matrix))))))
+      (is (= 25 (true-positives :a conf-matrix))))))
 
-(deftest false-positive-fn
+(deftest false-positives-fn
   (with-fixture confusion-matrix []
     (testing "get false positives of a class from a confusion matrix"
-      (is (= 4 (false-positive :a conf-matrix))))))
+      (is (= 4 (false-positives :a conf-matrix))))))
 
-(deftest false-negative-fn
+(deftest false-negatives-fn
   (with-fixture confusion-matrix []
     (testing "get false negatives of a class from a confusion matrix"
-      (is (= 7 (false-negative :a conf-matrix))))))
+      (is (= 7 (false-negatives :a conf-matrix))))))
 
-(deftest true-negative-fn
+(deftest true-negatives-fn
   (with-fixture confusion-matrix []
     (testing "get true negatives of a class from a confusion matrix"
-      (is (= 51 (true-negative :a conf-matrix))))))
+      (is (= 51 (true-negatives :a conf-matrix))))))
 
 (deftest precision-fn
   (with-fixture confusion-matrix []
