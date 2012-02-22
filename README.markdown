@@ -67,13 +67,9 @@ First, implement the required functions in a namespace of your choice. Use `clj-
 
 ### Database integration
 
-#### In-Memory Database
-
-This is enabled by default, since it doesn't require any dependencies.
-
 #### MongoDB
 
-To enable MongoDB integration, set the `*db-module*` var to `'mongodb`. Then, change the `*mongodb-<setting>*` vars to point to your MongoDB instance.
+MongoDB integration is enabled by default. Change the `*mongodb-<setting>*` vars to point to your MongoDB instance.
 
 #### Providing Your Own Database Layer
 
