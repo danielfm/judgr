@@ -34,7 +34,7 @@
   (let [features (extract-features item)]
     (fisher-prob (map #(posterior-prob-of-feature class %) features))))
 
-(defn posterior-probs
+(defn probs
   "Returns the probabilities of item for each possible class."
   [item]
   (let [classes (keys *classes*)]
@@ -49,8 +49,8 @@
   "Returns the class with the highest probability for item that passes the
 threshold validation."
   [item]
-  (let [posterior-probs (reverse (sort-by val (posterior-probs item)))
-        [first-prob second-prob & _]  posterior-probs]
+  (let [probs (reverse (sort-by val (probs item)))
+        [first-prob second-prob & _] probs]
     (if (or (not *threshold-enabled*)
             (<= (* (val second-prob)
                    (-> ((key first-prob) *classes*) :threshold))

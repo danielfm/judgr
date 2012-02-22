@@ -58,11 +58,11 @@
         (is (float= 4112702/4656612
                     (posterior-prob-of-item "Filha do diabo." :offensive)))))))
 
-(deftest posterior-probs-fn
+(deftest probs-fn
   (with-fixture test-memory-db []
     (with-fixture smoothing [1]
       (testing "probabilities of item for each possible class"
-        (let [probs (posterior-probs "Filha do diabo.")]
+        (let [probs (probs "Filha do diabo.")]
           (is (float= 4112702/4656612 (:offensive probs)))
           (is (float= 11073190/46566128 (:ok probs))))))))
 

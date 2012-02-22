@@ -1,14 +1,14 @@
 (ns clj-thatfinger.cross-validation
-  (:require [clj-thatfinger.db [memory-db :as memory-db]])
-  (:use [clj-thatfinger.core]
-        [clj-thatfinger.db.default-db]))
+  (:require [clj-thatfinger.db.memory-db :as memory-db]
+            [clj-thatfinger.db.default-db :as default-db])
+  (:use [clj-thatfinger.core]))
 
 (defn partition-items
   "Partitions all items into k chunks. Each chunk is guaranteed to have
 at least two items in it."
   [k]
-  (let [count (count-items)]
-   (partition (max (int (/ count (if (zero? k) 1 k))) 2) (get-items))))
+  (let [count (default-db/count-items)]
+   (partition (max (int (/ count (if (zero? k) 1 k))) 2) (default-db/get-items))))
 
 (defn remove-nth
   "Remove the nth element of a collection."
@@ -23,8 +23,8 @@ at least two items in it."
 
 (defn train-all-partitions-but!
   "Trains all chunks of items except the chunk at nth position."
-  [k msgs]
-  (doall (map #(train-partition! %) (remove-nth k msgs))))
+  [k items]
+  (doall (map #(train-partition! %) (remove-nth k items))))
 
 (defn expected-predicted-count
   "Returns a map {:expected-class {:predicted-class 1}}."
@@ -60,17 +60,18 @@ at least two items in it."
   [items]
   (reduce add-results (map expected-predicted-count items)))
 
-(defn k-fold-cross-validation
+(defn k-fold-crossval
   "Performs k-fold cross validation and return a confusion matrix as a map
 of maps, where the first level contains the expected classes and the second
 level contains predicted classes."
   [k]
   (let [subsets (partition-items k)]
     (memory-db/with-memory-db
-      (reduce add-results (map (fn [i]
-                                 (train-all-partitions-but! i subsets)
-                                 (eval-model (nth subsets i)))
-                               (range (count subsets)))))))
+      (let [lombra (map (fn [i]
+                          (train-all-partitions-but! i subsets)
+                          (eval-model (nth subsets i)))
+                        (range (count subsets)))]
+        (reduce add-results lombra)))))
 
 (defn- apply-to-each-key
   "Calls (f key map) for each key of map m and returns a hash-map with the
@@ -115,25 +116,30 @@ matrix."
 (defn precision
   "Calculates the precision of a confusion matrix, which is the percentage of
 positive predictions that are correct."
-  [conf-matrix]
-  (let [tp (true-positives conf-matrix)
-        fp (false-positives conf-matrix)]
+  [cls conf-matrix]
+  (let [tp (true-positives cls conf-matrix)
+        fp (false-positives cls conf-matrix)]
     (float (/ tp (+ tp fp)))))
 
 (defn recall
   "Calculates the recall of a confusion matrix, which is the percentage of positive
 labeled instances that were predicted as positive."
-  [conf-matrix]
-  (let [tp (true-positives conf-matrix)
-        fn (false-negatives conf-matrix)]
+  [cls conf-matrix]
+  (let [tp (true-positives cls conf-matrix)
+        fn (false-negatives cls conf-matrix)]
     (float (/ tp (+ tp fn)))))
+
+(defn sensitivity
+  "Alias for recall."
+  [cls conf-matrix]
+  (recall cls conf-matrix))
 
 (defn specificity
   "Calculates the specificity of a confusion matrix, which is the percentage of
 negative labeled instances that were predicted as negative."
-  [conf-matrix]
-  (let [tn (true-negatives conf-matrix)
-        fp (false-positives conf-matrix)]
+  [cls conf-matrix]
+  (let [tn (true-negatives cls conf-matrix)
+        fp (false-positives cls conf-matrix)]
     (float (/ tn (+ tn fp)))))
 
 (defn accuracy
@@ -149,7 +155,7 @@ predictions that are correct."
 (defn f1-score
   "Calculates the F1 score of a confusion matrix, which is a weighted average
 of the precision and recall."
-  [conf-matrix]
-  (let [prec (precision conf-matrix)
-        rec (recall conf-matrix)]
+  [cls conf-matrix]
+  (let [prec (precision cls conf-matrix)
+        rec (recall cls conf-matrix)]
     (float (* 2 (/ (*  prec rec) (+ prec rec))))))

@@ -107,38 +107,61 @@
 
 (deftest true-positives-fn
   (with-fixture confusion-matrix []
-    (testing "get the true positive count of a given class from a confusion matrix"
-      (is (= 25 (true-positives :a conf-matrix))))))
+    (testing "get the true positive count from a confusion matrix"
+      (is (= 25 (true-positives :a conf-matrix)))
+      (is (= 32 (true-positives :b conf-matrix)))
+      (is (= 15 (true-positives :c conf-matrix)))
+      (is (= 72 (true-positives conf-matrix))))))
 
 (deftest false-positives-fn
   (with-fixture confusion-matrix []
-    (testing "get false positives of a class from a confusion matrix"
-      (is (= 4 (false-positives :a conf-matrix))))))
+    (testing "get false positive count from a confusion matrix"
+      (is (= 4 (false-positives :a conf-matrix)))
+      (is (= 5 (false-positives :b conf-matrix)))
+      (is (= 6 (false-positives :c conf-matrix)))
+      (is (= 15 (false-positives conf-matrix))))))
 
 (deftest false-negatives-fn
   (with-fixture confusion-matrix []
-    (testing "get false negatives of a class from a confusion matrix"
-      (is (= 7 (false-negatives :a conf-matrix))))))
+    (testing "get false negative count from a confusion matrix"
+      (is (= 7 (false-negatives :a conf-matrix)))
+      (is (= 7 (false-negatives :b conf-matrix)))
+      (is (= 1 (false-negatives :c conf-matrix)))
+      (is (= 15 (false-negatives conf-matrix))))))
 
 (deftest true-negatives-fn
   (with-fixture confusion-matrix []
-    (testing "get true negatives of a class from a confusion matrix"
-      (is (= 51 (true-negatives :a conf-matrix))))))
+    (testing "get true negatives count from a confusion matrix"
+      (is (= 51 (true-negatives :a conf-matrix)))
+      (is (= 43 (true-negatives :b conf-matrix)))
+      (is (= 65 (true-negatives :c conf-matrix)))
+      (is (= 159 (true-negatives conf-matrix))))))
 
 (deftest precision-fn
   (with-fixture confusion-matrix []
     (testing "calculate the precision of a class from a confusion matrix"
-      (is (float= 0.82758 (precision conf-matrix))))))
+      (is (float= 0.86206 (precision :a conf-matrix)))
+      (is (float= 0.86486 (precision :b conf-matrix)))
+      (is (float= 0.714285 (precision :c conf-matrix))))))
 
 (deftest recall-fn
   (with-fixture confusion-matrix []
     (testing "calculate the recall of a class from a confusion matrix"
-      (is (float= 0.82758 (recall conf-matrix))))))
+      (is (float= 0.78125 (recall :a conf-matrix)))
+      (is (float= 0.82051 (recall :b conf-matrix)))
+      (is (float= 0.9375 (recall :c conf-matrix))))
+
+    (testing "sensitivity alias"
+      (is (float= 0.78125 (sensitivity :a conf-matrix)))
+      (is (float= 0.82051 (sensitivity :b conf-matrix)))
+      (is (float= 0.9375 (sensitivity :c conf-matrix))))))
 
 (deftest specificity-fn
   (with-fixture confusion-matrix []
     (testing "calculate the specificity of a class from a confusion matrix"
-      (is (float= 0.91379 (specificity conf-matrix))))))
+      (is (float= 0.92727 (specificity :a conf-matrix)))
+      (is (float= 0.89583 (specificity :b conf-matrix)))
+      (is (float= 0.91549 (specificity :c conf-matrix))))))
 
 (deftest accuracy-fn
   (with-fixture confusion-matrix []
@@ -147,5 +170,7 @@
 
 (deftest f1-score-fn
   (with-fixture confusion-matrix []
-    (testing "calculate F1 score for a class from a confusion matrix"
-      (is (float= 0.82758 (f1-score conf-matrix))))))
+    (testing "calculate F1 score of a class from a confusion matrix"
+      (is (float= 0.81967 (f1-score :a conf-matrix)))
+      (is (float= 0.84210 (f1-score :b conf-matrix)))
+      (is (float= 0.81081 (f1-score :c conf-matrix))))))
