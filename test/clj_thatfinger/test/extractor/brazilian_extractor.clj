@@ -1,6 +1,6 @@
-(ns clj-thatfinger.test.extractors.brazilian-extractor
-  (:use [clj-thatfinger.extractors.brazilian-extractor])
-  (:use [clj-thatfinger.extractors.factory])
+(ns clj-thatfinger.test.extractor.brazilian-extractor
+  (:use [clj-thatfinger.extractor.brazilian-extractor])
+  (:use [clj-thatfinger.extractor.factory])
   (:use [clojure.test]))
 
 (def extractor (make-brazilian-extractor))
