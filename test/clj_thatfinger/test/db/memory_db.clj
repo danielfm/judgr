@@ -2,9 +2,8 @@
   (:use [clj-thatfinger.db.memory-db]
         [clj-thatfinger.db.factory]
         [clj-thatfinger.test.util]
+        [clj-thatfinger.test.settings]
         [clojure.test]))
-
-(def settings {:classes {:ok {} :offensive {}}})
 
 (def-fixture empty-db []
   (let [db (make-memory-db settings)]
