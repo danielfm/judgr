@@ -7,7 +7,7 @@
   (:require [somnium.congomongo :as mongodb]))
 
 (defn- clean-db!
-  ""
+  "Removes all documents from the database."
   [db]
   (mongodb/with-mongo (.get-connection db)
     (mongodb/destroy! :items {})
