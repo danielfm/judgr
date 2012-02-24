@@ -23,3 +23,18 @@
 
   (count-items-of-class [db class]
     "Returns the number of items that belong to a class."))
+
+(defprotocol ConnectionBasedDB
+  "Databases that require a connection to work must implement this protocol."
+
+  (connect! [db]
+    "Connects to the database.")
+
+  (is-connected? [db]
+    "Returns whether the database connection is open.")
+
+  (disconnect! [db]
+    "Disconnects from the database.")
+
+  (get-connection [db]
+    "Returns the object that represents the connection to the database."))
