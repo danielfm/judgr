@@ -72,8 +72,8 @@
 
 (deftest getting-items
   (with-fixture basic-db []
-    (is (= '("Another message"
-             "Some message")
+    (is (= '("Some message"
+             "Another message")
            (map :item (.get-items db))))
 
     (testing "when there's no items"

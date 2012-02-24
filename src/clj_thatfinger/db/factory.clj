@@ -6,7 +6,7 @@
 (defn make-memory-db
   "Creates a new instance of MemoryDB."
   [settings]
-  (let [item-atom (atom '())
+  (let [item-atom (atom [])
         feature-atom (atom {})]
     (MemoryDB. settings item-atom feature-atom)))
 
