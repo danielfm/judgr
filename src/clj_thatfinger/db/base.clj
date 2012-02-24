@@ -1,5 +1,13 @@
 (ns clj-thatfinger.db.base)
 
+(defmacro ensure-valid-class
+  "Throws an exception if class is not a valid class. Otherwise, run the code
+in body."
+  [settings class & body]
+  `(if ((:classes ~settings) ~class)
+     (do ~@body)
+     (throw (IllegalArgumentException. "Invalid class"))))
+
 (defprotocol FeatureDB
   "Protocol for reading/writing feature information from/to a database."
 
