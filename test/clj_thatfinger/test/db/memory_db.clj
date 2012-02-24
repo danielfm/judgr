@@ -12,6 +12,8 @@
 
 (def-fixture basic-db []
   (let [db (make-memory-db settings)]
+    (.add-item! db "Some message" :ok)
+    (.add-item! db "Another message" :ok)
     (.add-feature! db "Some message" "message" :ok)
     (.add-feature! db "Another message" "message" :ok)
     (.add-feature! db "Another message" "another" :ok)
@@ -53,7 +55,7 @@
     (with-fixture empty-db []
       (is (zero? (.count-features db))))))
 
-(deftest geting-feature
+(deftest getting-feature
   (with-fixture basic-db []
     (let [data (.get-feature db "message")]
       (is (= "message" (:feature data)))
@@ -63,3 +65,28 @@
 
     (testing "when feature doesn't exist"
       (is (nil? (.get-feature db "void"))))))
+
+(deftest getting-items
+  (with-fixture basic-db []
+    (is (= '("Another message"
+             "Some message")
+           (map :item (.get-items db))))
+
+    (testing "when there's no items"
+      (with-fixture empty-db []
+        (is (= '() (.get-items db)))))))
+
+(deftest counting-items
+  (with-fixture basic-db []
+    (is (= 2 (.count-items db))))
+
+  (testing "when there's no items"
+    (with-fixture empty-db []
+      (is (zero? (.count-items db))))))
+
+(deftest counting-items-of-class
+  (with-fixture basic-db []
+    (is (= 2 (.count-items-of-class db :ok)))
+
+    (testing "when there's no items in class"
+      (is (zero? (.count-items-of-class db :offensive))))))

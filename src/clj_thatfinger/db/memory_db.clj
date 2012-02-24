@@ -3,7 +3,8 @@
   (:import [java.util Date]))
 
 (defmacro ensure-valid-class
-  "Throws an exception if class is not a valid class. Otherwise, run the code in body."
+  "Throws an exception if class is not a valid class. Otherwise, run the code
+in body."
   [settings class & body]
   `(if ((:classes ~settings) ~class)
      (do ~@body)
@@ -16,7 +17,7 @@
       (let [data {:item item
                   :created-at (Date.)
                   :class class}]
-        (swap! items-atom cons data)
+        (swap! items-atom conj data)
         data)))
 
   (add-feature! [db item feature class]
@@ -40,4 +41,13 @@
     (@features-atom feature))
 
   (count-features [db]
-    (count @features-atom)))
+    (count @features-atom))
+
+  (get-items [db]
+    @items-atom)
+
+  (count-items [db]
+    (count @items-atom))
+
+  (count-items-of-class [db class]
+    (count (filter #(= (:class %) class) @items-atom))))
