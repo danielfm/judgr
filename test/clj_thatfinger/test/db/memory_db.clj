@@ -31,11 +31,16 @@
 
 (deftest adding-features
   (with-fixture empty-db []
-    (let [data (.add-feature! db "Some message" "message" :ok)]
-      (is (= "message" (:feature data)))
-      (is (= '(:ok) (-> data :classes keys)))
-      (is (= 1 (-> data :classes :ok)))
-      (is (= 1 (:total data))))))
+    (testing "if everything's ok"
+      (let [data (.add-feature! db "Some message" "message" :ok)]
+        (is (= "message" (:feature data)))
+        (is (= '(:ok) (-> data :classes keys)))
+        (is (= 1 (-> data :classes :ok)))
+        (is (= 1 (:total data)))))
+
+    (testing "if class is invalid"
+      (is (thrown? IllegalArgumentException
+                   (.add-feature! db "Uma mensagem" "message" :some-class))))))
 
 (deftest updating-features
   (with-fixture basic-db []
