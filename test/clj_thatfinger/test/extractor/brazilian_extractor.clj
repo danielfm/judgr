@@ -1,9 +1,14 @@
 (ns clj-thatfinger.test.extractor.brazilian-extractor
-  (:use [clj-thatfinger.extractor.brazilian-extractor])
-  (:use [clj-thatfinger.extractor.factory])
-  (:use [clojure.test]))
+  (:use [clj-thatfinger.extractor.brazilian-extractor]
+        [clj-thatfinger.factory]
+        [clj-thatfinger.settings]
+        [clojure.test]))
 
-(def extractor (make-brazilian-extractor))
+
+(def extractor
+  (use-extractor
+   (update-settings settings
+                    [:extractor :type] :brazilian-text-extractor)))
 
 (deftest brazilian-extractor
   (testing "remove repeated characters"
