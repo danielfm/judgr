@@ -8,7 +8,7 @@
 (def extractor
   (use-extractor
    (update-settings settings
-                    [:extractor :type] :brazilian-text-extractor)))
+                    [:extractor :type] :brazilian-text)))
 
 (deftest ensure-mongodb
   (is (instance? BrazilianTextExtractor extractor)))

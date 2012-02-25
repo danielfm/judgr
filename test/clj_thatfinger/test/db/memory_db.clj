@@ -6,16 +6,16 @@
         [clojure.test])
   (:import [clj_thatfinger.db.memory_db MemoryDB]))
 
-(def memory-db
+(def memory
   (update-settings settings
-                   [:database :type] :memory-db))
+                   [:database :type] :memory))
 
 (def-fixture empty-db []
-  (let [db (use-db memory-db)]
+  (let [db (use-db memory)]
     (test-body)))
 
 (def-fixture basic-db []
-  (let [db (use-db memory-db)]
+  (let [db (use-db memory)]
     (.add-item! db "Some message" :ok)
     (.add-item! db "Another message" :ok)
     (.add-feature! db "Some message" "message" :ok)

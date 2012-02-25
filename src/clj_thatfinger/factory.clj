@@ -10,12 +10,12 @@
 ;;
 (defmulti use-db #(-> % :database :type))
 
-(defmethod use-db :memory-db [settings]
+(defmethod use-db :memory [settings]
   (let [item-atom (atom '[])
         feature-atom (atom {})]
     (MemoryDB. settings item-atom feature-atom)))
 
-(defmethod use-db :mongo-db [settings]
+(defmethod use-db :mongo [settings]
   (let [conn (mongo-db/create-connection! settings)]
     (MongoDB. settings conn)))
 
@@ -25,5 +25,5 @@
 ;;
 (defmulti use-extractor #(-> % :extractor :type))
 
-(defmethod use-extractor :brazilian-text-extractor [settings]
+(defmethod use-extractor :brazilian-text [settings]
   (BrazilianTextExtractor.))

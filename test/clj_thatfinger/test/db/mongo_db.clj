@@ -7,10 +7,10 @@
   (:require [somnium.congomongo :as mongodb])
   (:import [clj_thatfinger.db.mongo_db MongoDB]))
 
-(def mongo-db
+(def mongo
   (update-settings settings
-                   [:database :type] :mongo-db
-                   [:database :mongo-db :database] "clj-thatfinger-test"))
+                   [:database :type] :mongo
+                   [:database :mongo :database] "clj-thatfinger-test"))
 
 (defn- clean-db!
   "Removes all documents from the database."
@@ -20,12 +20,12 @@
     (mongodb/destroy! :features {})))
 
 (def-fixture empty-db []
-  (let [db (use-db mongo-db)]
+  (let [db (use-db mongo)]
     (clean-db! db)
     (test-body)))
 
 (def-fixture basic-db []
-  (let [db (use-db mongo-db)]
+  (let [db (use-db mongo)]
     (clean-db! db)
     (.add-item! db "Some message" :ok)
     (.add-item! db "Another message" :ok)

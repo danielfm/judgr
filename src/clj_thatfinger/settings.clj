@@ -6,15 +6,15 @@
    :classes   {:ok {:threshold 1.2}
                :offensive {:threshold 2.5}}
 
-   :extractor {:type :brazilian-text-extractor}
+   :extractor {:type :brazilian-text}
 
-   :database  {:type :mongo-db
-               :mongo-db  {:host "localhost"
-                           :port 27017
-                           :database "clj-thatfinger"
-                           :auth? false
-                           :username ""
-                           :password ""}}
+   :database  {:type :mongo
+               :mongo  {:host "localhost"
+                        :port 27017
+                        :database "clj-thatfinger"
+                        :auth? false
+                        :username ""
+                        :password ""}}
 
    :classifier {:type :default
                 :default {:threshold? true
