@@ -4,7 +4,8 @@
         [clj-thatfinger.test.util]
         [clj-thatfinger.settings]
         [clojure.test])
-  (:require [somnium.congomongo :as mongodb]))
+  (:require [somnium.congomongo :as mongodb])
+  (:import [clj_thatfinger.db.mongo_db MongoDB]))
 
 (def mongo-db
   (update-settings settings
@@ -32,6 +33,10 @@
     (.add-feature! db "Another message" "message" :ok)
     (.add-feature! db "Another message" "another" :ok)
     (test-body)))
+
+(deftest ensure-mongodb
+  (with-fixture empty-db []
+    (is (instance? MongoDB db))))
 
 (deftest adding-items
   (with-fixture empty-db []

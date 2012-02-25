@@ -2,13 +2,16 @@
   (:use [clj-thatfinger.extractor.brazilian-extractor]
         [clj-thatfinger.factory]
         [clj-thatfinger.settings]
-        [clojure.test]))
-
+        [clojure.test])
+  (:import [clj_thatfinger.extractor.brazilian_extractor BrazilianTextExtractor]))
 
 (def extractor
   (use-extractor
    (update-settings settings
                     [:extractor :type] :brazilian-text-extractor)))
+
+(deftest ensure-mongodb
+  (is (instance? BrazilianTextExtractor extractor)))
 
 (deftest brazilian-extractor
   (testing "remove repeated characters"

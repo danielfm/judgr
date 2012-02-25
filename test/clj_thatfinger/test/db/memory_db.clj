@@ -3,7 +3,8 @@
         [clj-thatfinger.factory]
         [clj-thatfinger.test.util]
         [clj-thatfinger.settings]
-        [clojure.test]))
+        [clojure.test])
+  (:import [clj_thatfinger.db.memory_db MemoryDB]))
 
 (def memory-db
   (update-settings settings
@@ -21,6 +22,10 @@
     (.add-feature! db "Another message" "message" :ok)
     (.add-feature! db "Another message" "another" :ok)
     (test-body)))
+
+(deftest ensure-mongodb
+  (with-fixture empty-db []
+    (is (instance? MemoryDB db))))
 
 (deftest adding-items
   (with-fixture empty-db []
