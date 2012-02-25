@@ -35,14 +35,5 @@ in body."
 (defprotocol ConnectionBasedDB
   "Databases that require a connection to work must implement this protocol."
 
-  (connect! [db]
-    "Connects to the database.")
-
-  (is-connected? [db]
-    "Returns whether the database connection is open.")
-
-  (disconnect! [db]
-    "Disconnects from the database.")
-
   (get-connection [db]
     "Returns the object that represents the connection to the database."))
