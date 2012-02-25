@@ -3,14 +3,9 @@
   (:require [somnium.congomongo :as mongodb])
   (:import [java.util Date]))
 
-(defn- authenticate
-  "Authenticates against the specified MongoDB connection."
-  [settings conn]
-  (let [mongodb-settings (:mongodb settings)]
-    (when (:auth? mongodb-settings)
-      (mongodb/authenticate conn
-                            (:username mongodb-settings)
-                            (:password mongodb-settings)))))
+(defn- mongo-db-settings
+  [settings]
+  (-> settings :database :mongo-db))
 
 (defn- ensure-indexes!
   "Creates all necessary MongoDB indexes."
@@ -19,13 +14,21 @@
     (mongodb/add-index! :items [:class])
     (mongodb/add-index! :features [:feature] :unique true)))
 
+(defn- authenticate
+  "Authenticates against the specified MongoDB connection."
+  [mongo-db-settings conn]
+  (when (:auth? mongo-db-settings)
+    (mongodb/authenticate conn
+                          (:username mongo-db-settings)
+                          (:password mongo-db-settings))))
+
 (defn create-connection!
   "Creates a connection to MongoDB server."
   [settings]
-  (let [mongodb-settings (:mongodb settings)
-        conn (mongodb/make-connection (:database mongodb-settings)
-                                      (:host mongodb-settings)
-                                      (:port mongodb-settings))]
+  (let [settings (mongo-db-settings settings)
+        conn (mongodb/make-connection (:database settings)
+                                      (:host settings)
+                                      (:port settings))]
     (authenticate settings conn)
     (ensure-indexes! conn)
     conn))
