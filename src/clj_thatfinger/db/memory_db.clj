@@ -13,21 +13,20 @@
         data)))
 
   (add-feature! [db item feature class]
-    (let [classes (:classes settings)]
-      (ensure-valid-class settings class
-        (let [f (.get-feature db feature)]
-          (if (nil? f)
-            (let [data {:feature feature
-                        :total 1
-                        :classes {class 1}}]
-              (swap! features-atom assoc feature data)
-              data)
-            (let [total-count (or (-> f :total) 0)
-                  class-count (or (-> f :classes class) 0)
-                  data (assoc-in (assoc f :total (inc total-count))
-                                 [:classes class] (inc class-count))]
-              (swap! features-atom assoc feature data)
-              data))))))
+    (ensure-valid-class settings class
+      (let [f (.get-feature db feature)]
+        (if (nil? f)
+          (let [data {:feature feature
+                      :total 1
+                      :classes {class 1}}]
+            (swap! features-atom assoc feature data)
+            data)
+          (let [total-count (or (-> f :total) 0)
+                class-count (or (-> f :classes class) 0)
+                data (assoc-in (assoc f :total (inc total-count))
+                               [:classes class] (inc class-count))]
+            (swap! features-atom assoc feature data)
+            data)))))
 
   (get-feature [db feature]
     (@features-atom feature))

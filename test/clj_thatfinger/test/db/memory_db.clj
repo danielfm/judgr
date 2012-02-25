@@ -1,16 +1,20 @@
 (ns clj-thatfinger.test.db.memory-db
   (:use [clj-thatfinger.db.memory-db]
-        [clj-thatfinger.db.factory]
+        [clj-thatfinger.factory]
         [clj-thatfinger.test.util]
-        [clj-thatfinger.test.settings]
+        [clj-thatfinger.settings]
         [clojure.test]))
 
+(def memory-db
+  (update-settings settings
+                   [:database :type] :memory-db))
+
 (def-fixture empty-db []
-  (let [db (make-memory-db settings)]
+  (let [db (use-db memory-db)]
     (test-body)))
 
 (def-fixture basic-db []
-  (let [db (make-memory-db settings)]
+  (let [db (use-db memory-db)]
     (.add-item! db "Some message" :ok)
     (.add-item! db "Another message" :ok)
     (.add-feature! db "Some message" "message" :ok)
