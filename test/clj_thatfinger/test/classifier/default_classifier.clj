@@ -18,10 +18,13 @@
 
 (def-fixture basic-db []
   (let [classifier (use-classifier new-settings)]
-    (.train! classifier "Você é um diabo, mesmo." :ok)
-    (.train! classifier "Sai de ré, capeta." :offensive)
-    (.train! classifier "Vai pro inferno, diabo!" :offensive)
-    (.train! classifier "Sua filha é uma diaba, doido." :offensive)
+    (doall (map (fn [[item class]]
+                  (.train! classifier item class))
+                '(["Você é um diabo, mesmo." :ok]
+                  ["Sai de ré, capeta." :offensive]
+                  ["Vai pro inferno, diabo!" :offensive]
+                  ["Sua filha é uma diaba, doido." :offensive])))
+
     (test-body)))
 
 (deftest ensure-mongodb
@@ -41,6 +44,5 @@
     (testing "should add item's features"
       (let [db (.db classifier)]
         (is (= 3 (.count-features db)))
-        (is (not (nil? (.get-feature db "sai"))))
-        (is (not (nil? (.get-feature db "ré"))))
-        (is (not (nil? (.get-feature db "capet"))))))))
+        (are [feature] (not (nil? (.get-feature db feature)))
+             "sai" "ré" "capet")))))
