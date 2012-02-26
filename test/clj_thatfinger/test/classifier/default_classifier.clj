@@ -38,6 +38,7 @@
     (testing "should add item"
       (let [db (.db classifier)
             item (last (.get-items db))]
+        (is (= 1 (.count-items db)))
         (is (= "Sai de ré, capeta." (:item item)))
         (is (= :offensive (:class item)))))
 
