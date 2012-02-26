@@ -6,7 +6,8 @@
 
   (:import  [clj_thatfinger.db.memory_db MemoryDB]
             [clj_thatfinger.db.mongo_db MongoDB]
-            [clj_thatfinger.extractor.brazilian_extractor BrazilianTextExtractor]))
+            [clj_thatfinger.extractor.brazilian_extractor BrazilianTextExtractor]
+            [clj_thatfinger.classifier.default_classifier DefaultClassifier]))
 
 ;;
 ;; DBs
@@ -30,3 +31,14 @@
 
 (defmethod use-extractor :brazilian-text [settings]
   (BrazilianTextExtractor.))
+
+
+;;
+;; Classifiers
+;;
+(defmulti use-classifier #(-> % :classifier :type))
+
+(defmethod use-classifier :default [settings]
+  (let [db (use-db settings)
+        extractor (use-extractor settings)]
+    (DefaultClassifier. settings db extractor)))
