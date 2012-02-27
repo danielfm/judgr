@@ -20,7 +20,7 @@
 
 (defn create-connection!
   "Creates a connection to MongoDB server."
-  [{{:keys [mongo]} :database} ]
+  [{{:keys [mongo]} :database}]
   (let [conn (mongodb/make-connection (:database mongo)
                                       (:host mongo)
                                       (:port mongo))]
