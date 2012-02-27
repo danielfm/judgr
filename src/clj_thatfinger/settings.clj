@@ -1,10 +1,7 @@
 (ns clj-thatfinger.settings)
 
 (def ^:dynamic settings
-  {:unknown-class :unknown
-
-   :classes   {:ok {:threshold 1.2}
-               :offensive {:threshold 2.5}}
+  {:classes   [:ok :offensive]
 
    :extractor {:type :brazilian-text}
 
@@ -17,9 +14,12 @@
                         :password ""}}
 
    :classifier {:type :default
-                :default {:threshold? true
-                          :unbiased? false
-                          :smoothing-factor 1}}})
+                :default {:unbiased? false
+                          :smoothing-factor 1
+                          :threshold? true
+                          :thresholds {:ok 1.2
+                                       :offensive 2.5}
+                          :unknown-class :unknown}}})
 
 (defn update-settings
   "Returns an updated version of map m by applying assoc-in.

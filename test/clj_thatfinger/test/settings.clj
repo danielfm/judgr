@@ -5,9 +5,8 @@
 (deftest updating-settings
   (testing "changing an existing setting"
     (let [new-settings (update-settings settings
-                                        [:classes :ok :threshold] 3)]
-      (is (= 3 (-> new-settings :classes :ok :threshold)))
-      (is (= 2.5 (-> new-settings :classes :offensive :threshold)))))
+                                        [:classes] [:ok :not-ok])]
+      (is (= [:ok :not-ok] (-> new-settings :classes)))))
 
   (testing "adding a new setting"
     (let [new-settings (update-settings settings

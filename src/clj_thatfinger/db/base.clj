@@ -4,7 +4,7 @@
   "Throws an exception if class is not a valid class. Otherwise, run the code
 in body."
   [settings class & body]
-  `(if ((:classes ~settings) ~class)
+  `(if ((set (:classes ~settings)) ~class)
      (do ~@body)
      (throw (IllegalArgumentException. "Invalid class"))))
 
