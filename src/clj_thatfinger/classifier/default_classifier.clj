@@ -23,6 +23,21 @@
       (.add-item! db item class)
       (doall (map #(.add-feature! db item % class) features))))
 
+  (probabilities [c item]
+    (let [classes (:classes settings)]
+      (zipmap classes (map #(.class-probability-given-item c % item) classes))))
+
+  (classify [c item]
+    (let [classifier-settings (classifier-settings settings)
+          probs (reverse (sort-by val (.probabilities c item)))
+          [first-prob second-prob & _] probs]
+      (if (or (not (:threshold? classifier-settings))
+              (<= (* (val second-prob)
+                     ((-> classifier-settings :thresholds) (key first-prob)))
+                  (val first-prob)))
+        (key first-prob)
+        (:unknown-class classifier-settings))))
+
   NaiveBayes
 
   (class-probability [c class]
@@ -50,4 +65,9 @@
                              (:classes settings)))]
       (if (zero? total-probs)
         0
-        (float (/ (* prior posterior) total-probs))))))
+        (/ (* prior posterior) total-probs))))
+
+  (class-probability-given-item [c class item]
+    (let [features (.extract-features extractor item)]
+      (fisher-prob (map #(.class-probability-given-feature c class %)
+                        features)))))
