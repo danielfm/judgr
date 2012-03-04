@@ -1,4 +1,4 @@
-(ns clj-thatfinger.probability)
+(ns judgr.probability)
 
 (defn inv-chi-sq
   "Returns the inverse chi squared with df degrees of freedom."

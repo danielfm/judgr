@@ -1,6 +1,6 @@
-(ns clj-thatfinger.classifier.default-classifier
-  (:use [clj-thatfinger.classifier.base]
-        [clj-thatfinger.probability]))
+(ns judgr.classifier.default-classifier
+  (:use [judgr.classifier.base]
+        [judgr.probability]))
 
 (defn- classifier-settings
   "Returns the settings specific for this classifier."

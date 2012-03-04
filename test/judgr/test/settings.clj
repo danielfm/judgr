@@ -1,5 +1,5 @@
-(ns clj-thatfinger.test.settings
-  (:use [clj-thatfinger.settings]
+(ns judgr.test.settings
+  (:use [judgr.settings]
         [clojure.test]))
 
 (deftest updating-settings

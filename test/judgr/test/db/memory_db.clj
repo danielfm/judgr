@@ -1,32 +1,21 @@
-(ns clj-thatfinger.test.db.mongo-db
-  (:use [clj-thatfinger.db.mongo-db]
-        [clj-thatfinger.factory]
-        [clj-thatfinger.test.util]
-        [clj-thatfinger.settings]
+(ns judgr.test.db.memory-db
+  (:use [judgr.db.memory-db]
+        [judgr.core]
+        [judgr.test.util]
+        [judgr.settings]
         [clojure.test])
-  (:require [somnium.congomongo :as mongodb])
-  (:import [clj_thatfinger.db.mongo_db MongoDB]))
+  (:import [judgr.db.memory_db MemoryDB]))
 
-(def mongo
+(def new-settings
   (update-settings settings
-                   [:database :type] :mongo
-                   [:database :mongo :database] "clj-thatfinger-test"))
-
-(defn- clean-db!
-  "Removes all documents from the database."
-  [db]
-  (mongodb/with-mongo (.get-connection db)
-    (mongodb/destroy! :items {})
-    (mongodb/destroy! :features {})))
+                   [:database :type] :memory))
 
 (def-fixture empty-db []
-  (let [db (use-db mongo)]
-    (clean-db! db)
+  (let [db (db-from new-settings)]
     (test-body)))
 
 (def-fixture basic-db []
-  (let [db (use-db mongo)]
-    (clean-db! db)
+  (let [db (db-from new-settings)]
     (.add-item! db "Some message" :ok)
     (.add-item! db "Another message" :ok)
     (.add-feature! db "Some message" "message" :ok)
@@ -36,7 +25,7 @@
 
 (deftest ensure-mongodb
   (with-fixture empty-db []
-    (is (instance? MongoDB db))))
+    (is (instance? MemoryDB db))))
 
 (deftest adding-items
   (with-fixture empty-db []

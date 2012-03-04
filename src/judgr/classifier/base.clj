@@ -1,4 +1,4 @@
-(ns clj-thatfinger.classifier.base)
+(ns judgr.classifier.base)
 
 (defprotocol Classifier
   ""

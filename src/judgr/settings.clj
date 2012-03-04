@@ -1,4 +1,4 @@
-(ns clj-thatfinger.settings)
+(ns judgr.settings)
 
 (def ^:dynamic settings
   {:classes   [:ok :offensive]

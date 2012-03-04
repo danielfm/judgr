@@ -1,6 +1,6 @@
-(ns clj-thatfinger.test.probability
-  (:use [clj-thatfinger.probability]
-        [clj-thatfinger.test.util]
+(ns judgr.test.probability
+  (:use [judgr.probability]
+        [judgr.test.util]
         [clojure.test]))
 
 (deftest calculating-inverse-chi-squared

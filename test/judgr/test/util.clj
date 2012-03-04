@@ -1,4 +1,4 @@
-(ns clj-thatfinger.test.util
+(ns judgr.test.util
   (:use [clojure.tools.macro]))
 
 (def ^:dynamic *fixtures* (atom {}))

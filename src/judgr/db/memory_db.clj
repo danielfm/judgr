@@ -1,5 +1,5 @@
-(ns clj-thatfinger.db.memory-db
-  (:use [clj-thatfinger.db.base])
+(ns judgr.db.memory-db
+  (:use [judgr.db.base])
   (:import [java.util Date]))
 
 (deftype MemoryDB [settings items-atom features-atom]

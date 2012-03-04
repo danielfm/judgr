@@ -1,5 +1,5 @@
-(ns clj-thatfinger.db.mongo-db
-  (:use [clj-thatfinger.db.base])
+(ns judgr.db.mongo-db
+  (:use [judgr.db.base])
   (:require [somnium.congomongo :as mongodb])
   (:import [java.util Date]))
 

@@ -1,4 +1,4 @@
-(ns clj-thatfinger.extractor.base)
+(ns judgr.extractor.base)
 
 (defprotocol FeatureExtractor
   "Protocol for extracting features of a classifiable item."

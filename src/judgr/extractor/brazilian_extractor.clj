@@ -1,5 +1,5 @@
-(ns clj-thatfinger.extractor.brazilian-extractor
-  (:use [clj-thatfinger.extractor.base])
+(ns judgr.extractor.brazilian-extractor
+  (:use [judgr.extractor.base])
   (:require [clojure.string :as str])
   (:import  [java.io StringReader]
             [org.apache.lucene.analysis.tokenattributes CharTermAttribute]

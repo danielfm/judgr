@@ -1,12 +1,12 @@
-(ns clj-thatfinger.test.extractor.brazilian-extractor
-  (:use [clj-thatfinger.extractor.brazilian-extractor]
-        [clj-thatfinger.factory]
-        [clj-thatfinger.settings]
+(ns judgr.test.extractor.brazilian-extractor
+  (:use [judgr.extractor.brazilian-extractor]
+        [judgr.core]
+        [judgr.settings]
         [clojure.test])
-  (:import [clj_thatfinger.extractor.brazilian_extractor BrazilianTextExtractor]))
+  (:import [judgr.extractor.brazilian_extractor BrazilianTextExtractor]))
 
 (def extractor
-  (use-extractor
+  (extractor-from
    (update-settings settings
                     [:extractor :type] :brazilian-text)))
 

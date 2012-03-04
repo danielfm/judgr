@@ -1,10 +1,10 @@
-(ns clj-thatfinger.test.classifier.default-classifier
-  (:use [clj-thatfinger.classifier.default-classifier]
-        [clj-thatfinger.factory]
-        [clj-thatfinger.test.util]
-        [clj-thatfinger.settings]
+(ns judgr.test.classifier.default-classifier
+  (:use [judgr.classifier.default-classifier]
+        [judgr.core]
+        [judgr.test.util]
+        [judgr.settings]
         [clojure.test])
-  (:import [clj_thatfinger.classifier.default_classifier DefaultClassifier]))
+  (:import [judgr.classifier.default_classifier DefaultClassifier]))
 
 (def new-settings
   (update-settings settings
@@ -13,11 +13,11 @@
                    [:extractor :type] :brazilian-text))
 
 (def-fixture empty-db []
-  (let [classifier (use-classifier new-settings)]
+  (let [classifier (classifier-from new-settings)]
     (test-body)))
 
 (def-fixture basic-db []
-  (let [classifier (use-classifier new-settings)]
+  (let [classifier (classifier-from new-settings)]
     (doall (map (fn [[item class]] (.train! classifier item class))
                 '(["Você é um diabo, mesmo." :ok]
                   ["Sai de ré, capeta." :offensive]

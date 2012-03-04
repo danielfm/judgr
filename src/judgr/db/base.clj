@@ -1,4 +1,4 @@
-(ns clj-thatfinger.db.base)
+(ns judgr.db.base)
 
 (defmacro ensure-valid-class
   "Throws an exception if class is not a valid class. Otherwise, run the code
