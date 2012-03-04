@@ -8,7 +8,7 @@
    :database  {:type :mongo
                :mongo  {:host "localhost"
                         :port 27017
-                        :database "clj-thatfinger"
+                        :database "judgr"
                         :auth? false
                         :username ""
                         :password ""}}
