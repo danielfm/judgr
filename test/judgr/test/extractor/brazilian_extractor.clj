@@ -10,7 +10,7 @@
    (update-settings settings
                     [:extractor :type] :brazilian-text)))
 
-(deftest ensure-mongodb
+(deftest ensure-brazilian-text-extractor
   (is (instance? BrazilianTextExtractor extractor)))
 
 (deftest brazilian-extractor

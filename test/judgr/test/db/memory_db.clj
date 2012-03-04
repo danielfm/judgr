@@ -23,7 +23,7 @@
     (.add-feature! db "Another message" "another" :ok)
     (test-body)))
 
-(deftest ensure-mongodb
+(deftest ensure-memorydb
   (with-fixture empty-db []
     (is (instance? MemoryDB db))))
 
