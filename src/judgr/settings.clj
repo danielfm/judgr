@@ -3,7 +3,7 @@
 (def ^:dynamic settings
   {:classes   [:ok :offensive]
 
-   :extractor {:type :brazilian-text}
+   :extractor {:type :english-text}
 
    :database  {:type :mongo
                :mongo  {:host "localhost"

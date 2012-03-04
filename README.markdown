@@ -184,11 +184,11 @@ user=> (def settings
 
 ### Feature extraction
 
-#### Brazilian Portuguese
+#### English And Brazilian Portuguese
 
-We provide a simple implementation for Brazilian Portuguese based on
-the work done in [Apache Lucene](http://lucene.apache.org/core/),
-which is enabled by default.
+We provide a simple implementation for English (default) and Brazilian
+Portuguese, based on the work done in
+[Apache Lucene](http://lucene.apache.org/core/).
 
 #### Providing Your Own Feature Extractor
 

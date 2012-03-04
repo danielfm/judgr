@@ -2,11 +2,13 @@
   (:require [judgr.db [mongo-db :as mongo-db]]
             [judgr.db.memory-db]
             [judgr.extractor.brazilian-extractor]
+            [judgr.extractor.english-extractor]
             [judgr.classifier.default-classifier])
 
   (:import  [judgr.db.memory_db MemoryDB]
             [judgr.db.mongo_db MongoDB]
             [judgr.extractor.brazilian_extractor BrazilianTextExtractor]
+            [judgr.extractor.english_extractor EnglishTextExtractor]
             [judgr.classifier.default_classifier DefaultClassifier]))
 
 ;;
@@ -31,6 +33,9 @@
 
 (defmethod extractor-from :brazilian-text [settings]
   (BrazilianTextExtractor.))
+
+(defmethod extractor-from :english-text [settings]
+  (EnglishTextExtractor.))
 
 
 ;;
