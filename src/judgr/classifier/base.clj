@@ -1,7 +1,7 @@
 (ns judgr.classifier.base)
 
 (defprotocol Classifier
-  ""
+  "Protocol for training and evaluating a probabilistic classifier."
 
   (train! [c item class]
     "Labels item with class.")
@@ -13,7 +13,7 @@
     "Returns the probabilities of item for each possible class."))
 
 (defprotocol NaiveBayes
-  ""
+  "Protocol for calculating probabilities according to the Bayes rule."
 
   (class-probability [c class]
     "Returns the probability of an item to be part of class.")
