@@ -17,14 +17,13 @@ support for cross validation, and more.
 
 ## Getting Started
 
-Clone the project and start a Clojure REPL session with `lein repl`:
+Clone the project or add the following dependency to your
+_project.clj_ file:
 
 ````clojure
 
-user=> (use '[judgr.core]
-            '[judgr.settings])
-nil
-```
+[judgr "0.1.0"]
+````
 
 ### Training The Classifier
 
@@ -32,6 +31,9 @@ The first step is to instantiate the classifier given the current settings:
 
 ````clojure
 
+user=> (use '[judgr.core]
+            '[judgr.settings])
+nil
 user=> (def classifier (classifier-from settings))
 #'user/classifier
 ````
