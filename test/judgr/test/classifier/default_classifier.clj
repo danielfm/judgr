@@ -96,6 +96,8 @@
         (are [f cls v] (close-to? v (.feature-probability-given-class classifier f cls))
              "diab" :ok        1/6
              "diab" :offensive 3/14
+             "filh" :ok        1/12
+             "filh" :offensive 1/7
              "else" :ok        1/12))))
 
   (testing "without smoothing"
@@ -104,36 +106,43 @@
         (are [f cls v] (close-to? v (.feature-probability-given-class classifier f cls))
              "diab" :ok        1
              "diab" :offensive 2/3
+             "filh" :ok        0
+             "filh" :offensive 1/3
              "else" :ok        0)))))
 
-(deftest calculating-probability-of-class-given-feature
+(deftest calculating-probability-of-feature
   (testing "with smoothing"
     (with-fixture smoothing-factor [1]
       (with-fixture basic-db []
-        (are [cls f v] (close-to? v (.class-probability-given-feature classifier cls f))
-             :ok        "diab" 7/25
-             :offensive "diab" 18/25))))
+        (are [f v] (close-to? v (.feature-probability classifier f))
+             "diab" 4/15
+             "filh" 2/15
+             "else" 1/15))))
 
   (testing "without smoothing"
     (with-fixture smoothing-factor [0]
       (with-fixture basic-db []
-        (are [cls f v] (close-to? v (.class-probability-given-feature classifier cls f))
-             :ok        "diab" 1/3
-             :offensive "diab" 2/3)))))
-
-(deftest calculating-probability-of-class-given-item
-  (with-fixture smoothing-factor [1]
-    (with-fixture basic-db []
-      (are [cls item v (close-to? v (.probability-of-class-given-item classifier cls item))]
-           :offensive "Filha do diabo." 4112702/4656612))))
+        (are [f v] (close-to? v (.feature-probability classifier f))
+             "diab" 3/4
+             "filh" 1/4
+             "else" 0)))))
 
 (deftest calculating-probabilities-of-item
-  (with-fixture smoothing-factor [1]
-    (with-fixture basic-db []
-      (let [probs (.probabilities classifier "Filha do diabo.")]
-        (are [cls v] (close-to? v (cls probs))
-             :offensive 4112702/4656612
-             :ok        11073190/46566128)))))
+  (testing "with smoothing"
+    (with-fixture smoothing-factor [1]
+      (with-fixture basic-db []
+        (let [probs (.probabilities classifier "Filha do diabo.")]
+          (are [cls v] (close-to? v (cls probs))
+               :offensive 225/392
+               :ok        25/192)))))
+
+  (testing "without smoothing"
+    (with-fixture smoothing-factor [0]
+      (with-fixture basic-db []
+        (let [probs (.probabilities classifier "Filha do diabo.")]
+          (are [cls v] (close-to? v (cls probs))
+               :offensive 8/9
+               :ok        0))))))
 
 (deftest classifying-item
   (testing "class with greatest probability passes the threshold test"

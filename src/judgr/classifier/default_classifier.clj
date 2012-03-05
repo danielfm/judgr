@@ -1,6 +1,5 @@
 (ns judgr.classifier.default-classifier
-  (:use [judgr.classifier.base]
-        [judgr.probability]))
+  (:use [judgr.classifier.base]))
 
 (defn- classifier-settings
   "Returns the settings specific for this classifier."
@@ -56,18 +55,18 @@
                     (.count-features db)
                     settings)))
 
-  (class-probability-given-feature [c class feature]
-    (let [prior (.class-probability c class)
-          posterior (.feature-probability-given-class c feature class)
-          total-probs (reduce +
-                        (map #(* (.feature-probability-given-class c feature %)
-                                 (.class-probability c %))
-                             (:classes settings)))]
-      (if (zero? total-probs)
-        0
-        (/ (* prior posterior) total-probs))))
+  (feature-probability [c feature]
+    (probability (:total (.get-feature db feature))
+                 (.count-items db)
+                 (.count-features db)
+                 settings))
 
   (class-probability-given-item [c class item]
     (let [features (.extract-features extractor item)]
-      (fisher-prob (map #(.class-probability-given-feature c class %)
-                        features)))))
+      (letfn [(feature-given-class [feature]
+                (.feature-probability-given-class c feature class))
+              (features-prob [feature]
+                (.feature-probability c feature))]
+        (/ (* (.class-probability c class)
+              (reduce * (map feature-given-class features)))
+           (reduce * (map features-prob features)))))))
