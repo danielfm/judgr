@@ -184,7 +184,7 @@ user=> (def settings
                           [:classes] [:spam :ham]))
 ````
 
-### Feature extraction
+### Feature Extraction
 
 #### English And Brazilian Portuguese
 
@@ -238,7 +238,7 @@ user=> (extractor-from settings)
 #<CustomExtractor ...>
 ````
 
-### Database integration
+### Database Integration
 
 #### MongoDB
 
