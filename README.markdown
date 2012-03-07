@@ -428,7 +428,7 @@ user=> (def my-settings
          (update-settings settings
                           [:classifier :type] :custom))
 #'user/settings
-user=> (classifier-from settings)
+user=> (classifier-from my-settings)
 #<CustomClassifier ...>
 ````
 
