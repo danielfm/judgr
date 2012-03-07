@@ -177,18 +177,18 @@ example, if you are building a spam classifier:
 
 ````clojure
 
-user=> (use 'judgr.settings)
-nil
-user=> (def settings
-         (update-settings settings
-                          [:classes] [:spam :ham]))
+(use 'judgr.settings)
+
+(def my-settings
+  (update-settings settings
+                   [:classes] [:spam :ham]))
 ````
 
 ### Feature Extraction
 
 #### English And Brazilian Portuguese
 
-We provide a simple implementation for English (default) and Brazilian
+We provide simple implementations for English (default) and Brazilian
 Portuguese, based on the work done in
 [Apache Lucene](http://lucene.apache.org/core/).
 
@@ -228,13 +228,13 @@ used in `defmethod`:
 
 ````clojure
 
-(use 'judgr.settings)
-
-user=> (def settings
+user=> (use 'judgr.settings)
+nil
+user=> (def my-settings
          (update-settings settings
                           [:extractor :type] :custom))
-#'user/settings
-user=> (extractor-from settings)
+#'user/my-settings
+user=> (extractor-from my-settings)
 #<CustomExtractor ...>
 ````
 
@@ -251,7 +251,7 @@ apply for you:
 
 (use 'judgr.settings)
 
-(def settings
+(def my-settings
   (update-settings settings
                    [:database :mongo :host] "your-mongodb-host"
                    [:database :mongo :auth?] true
@@ -300,13 +300,13 @@ in `defmethod`:
 
 ````clojure
 
-(use 'judgr.settings)
-
-user=> (def settings
+user=> (use 'judgr.settings)
+nil
+user=> (def my-settings
          (update-settings settings
                           [:database :type] :custom))
 #'user/settings
-user=> (db-from settings)
+user=> (db-from my-settings)
 #<CustomDB ...>
 ````
 
@@ -328,7 +328,9 @@ setting:
 
 ````clojure
 
-(def settings
+(use 'judgr.settings)
+
+(def my-settings
   (update-settings settings
                    [:classifier :default :threshold?] true
                    [:classifier :default :thresholds] {:ok 1 :offensive 2}))
@@ -350,7 +352,9 @@ usually good enough:
 
 ````clojure
 
-(def settings
+(use 'judgr.settings)
+
+(def my-settings
   (update-settings settings
                    [:classifier :default :smoothing-factor] 0.7))
 ````
@@ -371,7 +375,9 @@ If the `[:classifier :default :unbiased?]` setting is configured to
 
 ````clojure
 
-(def settings
+(use 'judgr.settings)
+
+(def my-settings
   (update-settings settings
                    [:classifier :default :unbiased?] true))
 ```
@@ -416,9 +422,9 @@ used in `defmethod`:
 
 ````clojure
 
-(use 'judgr.settings)
-
-user=> (def settings
+user=> (use 'judgr.settings)
+nil
+user=> (def my-settings
          (update-settings settings
                           [:classifier :type] :custom))
 #'user/settings
