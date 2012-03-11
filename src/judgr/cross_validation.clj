@@ -4,6 +4,7 @@
         [judgr.settings]))
 
 (defn- in-memory-classifier
+  "Returns a classifier based on the given one that uses an in-memory database."
   [classifier]
   (let [settings (update-settings (.settings classifier)
                                   [:database :type] :memory)]
