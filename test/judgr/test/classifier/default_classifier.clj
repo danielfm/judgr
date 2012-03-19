@@ -46,7 +46,7 @@
                                       [:classifier :default :threshold?] threshold?)]
     (test-body)))
 
-(deftest ensure-mongodb
+(deftest ensure-default-classifier
   (with-fixture empty-db []
     (is (instance? DefaultClassifier classifier))))
 
