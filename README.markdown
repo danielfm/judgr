@@ -9,13 +9,13 @@ support for cross validation, and more.
 
 ## Features
 
+* Out of the box integration with MongoDB
 * Multivariate classification
 * Biased and unbiased class probabability
 * Configurable [Laplace Smoothing](http://en.wikipedia.org/wiki/Additive_smoothing)
 * Configurable threshold validation
 * K-fold cross-validation
   * Precision, Recall, Specificity, Accuracy, and F1 score
-* Out of the box integration with MongoDB
 
 ## Getting Started
 
