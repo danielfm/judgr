@@ -1,12 +1,10 @@
 (ns judgr.core
-  (:require [judgr.db [mongo-db :as mongo-db]]
-            [judgr.db.memory-db]
+  (:require [judgr.db.memory-db]
             [judgr.extractor.brazilian-extractor]
             [judgr.extractor.english-extractor]
             [judgr.classifier.default-classifier])
 
   (:import  [judgr.db.memory_db MemoryDB]
-            [judgr.db.mongo_db MongoDB]
             [judgr.extractor.brazilian_extractor BrazilianTextExtractor]
             [judgr.extractor.english_extractor EnglishTextExtractor]
             [judgr.classifier.default_classifier DefaultClassifier]))
@@ -20,10 +18,6 @@
   (let [item-atom (atom '[])
         feature-atom (atom {})]
     (MemoryDB. settings item-atom feature-atom)))
-
-(defmethod db-from :mongo [settings]
-  (let [conn (mongo-db/create-connection! settings)]
-    (MongoDB. settings conn)))
 
 
 ;;

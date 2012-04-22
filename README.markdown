@@ -9,7 +9,6 @@ support for cross validation, and more.
 
 ## Features
 
-* Out of the box integration with MongoDB
 * Multivariate classification
 * Biased and unbiased class probabability
 * Configurable [Laplace Smoothing](http://en.wikipedia.org/wiki/Additive_smoothing)
@@ -19,12 +18,11 @@ support for cross validation, and more.
 
 ## Getting Started
 
-Clone the project or add the following dependency to your
-_project.clj_ file:
+Add the following dependency to your _project.clj_ file:
 
 ````clojure
 
-[judgr "0.1.0"]
+[judgr "0.1.1"]
 ````
 
 ### Training The Classifier
@@ -49,11 +47,11 @@ Now you can start training the classifier with `(.train! classifier item :class)
 (.train! classifier ...)
 ````
 
-The default classifier saves data to a local instance of MongoDB and
-are capable of extracting words from the given text using a porter
-stemmer. Also, items can be classified as either `:ok` or
-`:offensive`. If your problem requires different settings, please take
-a look at the _Extending The Classifier_ section below.
+The default classifier saves data to memory and are capable of
+extracting words from the given text using a porter stemmer. Also,
+items can be classified as either `:ok` or `:offensive`. If your
+problem requires different settings, please take a look at the
+_Extending The Classifier_ section below.
 
 ### Classifying Items
 
@@ -242,24 +240,9 @@ user=> (extractor-from my-settings)
 
 ### Database Integration
 
-#### MongoDB
+#### Memory
 
-MongoDB integration is enabled by default.
-
-Change the `[:database :mongo *]` settings if the default values don't
-apply for you:
-
-````clojure
-
-(use 'judgr.settings)
-
-(def my-settings
-  (update-settings settings
-                   [:database :mongo :host] "your-mongodb-host"
-                   [:database :mongo :auth?] true
-                   ;; ...
-                   ))
-````
+In-memory integration is enabled by default.
 
 #### Providing Your Own Database Layer
 

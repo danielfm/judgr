@@ -5,13 +5,7 @@
 
    :extractor {:type :english-text}
 
-   :database  {:type :mongo
-               :mongo  {:host "localhost"
-                        :port 27017
-                        :database "judgr"
-                        :auth? false
-                        :username ""
-                        :password ""}}
+   :database  {:type :memory}
 
    :classifier {:type :default
                 :default {:unbiased? false

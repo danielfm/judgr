@@ -10,6 +10,6 @@
 
   (testing "adding a new setting"
     (let [new-settings (update-settings settings
-                                        [:database :mydb :host] "localhost")]
-      (is (= "localhost" (-> new-settings :database :mydb :host)))
-      (is (= 27017 (-> new-settings :database :mongo :port))))))
+                                        [:database :setting] "value")]
+      (is (= "value" (-> new-settings :database :setting)))
+      (is (= :memory (-> new-settings :database :type))))))
