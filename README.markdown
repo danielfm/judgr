@@ -244,6 +244,12 @@ user=> (extractor-from my-settings)
 
 In-memory integration is enabled by default.
 
+#### Third-Party Database Support
+
+There are ready-to-use integration packages for other databases:
+
+* [MongoDB](https://github.com/danielfm/judgr-mongodb)
+
 #### Providing Your Own Database Layer
 
 The procedure is similar to what was shown in _Providing Your Own
