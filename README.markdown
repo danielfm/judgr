@@ -249,6 +249,7 @@ In-memory integration is enabled by default.
 There are ready-to-use integration packages for other databases:
 
 * [MongoDB](https://github.com/danielfm/judgr-mongodb)
+* [Redis](https://github.com/danielfm/judgr-redis)
 
 #### Providing Your Own Database Layer
 
