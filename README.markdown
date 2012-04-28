@@ -42,14 +42,14 @@ Now you can start training the classifier with `(.train! classifier item :class)
 
 ````clojure
 
-(.train! classifier "How are you?" :ok)
-(.train! classifier "I hate your kind, I hope you burn in hell." :offensive)
+(.train! classifier "How are you?" :positive)
+(.train! classifier "I hate your kind, I hope you burn in hell." :negative)
 (.train! classifier ...)
 ````
 
 The default classifier saves data to memory and are capable of
 extracting words from the given text using a porter stemmer. Also,
-items can be classified as either `:ok` or `:offensive`. If your
+items can be classified as either `:positive` or `:negative`. If your
 problem requires different settings, please take a look at the
 _Extending The Classifier_ section below.
 
@@ -61,9 +61,9 @@ on which class that item falls into:
 ````clojure
 
 user=> (.classify classifier "Long time, no see.")
-:ok
+:positive
 user=> (.classify classifier "Go to hell.")
-:offensive
+:negative
 ````
 
 It's also possible to get the probabilities for all classes:
@@ -71,7 +71,7 @@ It's also possible to get the probabilities for all classes:
 ````clojure
 
 user=> (.probabilities "Long time, no see.")
-{:offensive 0.38461539149284363, :ok 0.6153846383094788}
+{:negative 0.38461539149284363, :positive 0.6153846383094788}
 ````
 
 ### Evaluating The Classifier
@@ -91,16 +91,16 @@ nil
 user=> (def conf-matrix (k-fold-crossval 2 classifier))
 #'user/conf-matrix
 user=> conf-matrix
-{:ok {:ok 102
-      :offensive 3}
- :offensive {:ok 7
-             :offensive 186}}
+{:positive {:positive 102
+            :negative 3}
+ :negative {:positive 7
+            :negative 186}}
 ````
 
 This Confusion Matrix will tell, for each known class, how many items
 it predicted correctly, and how many items it predicted as being in
-another class. For example, for all items known as `:ok`, 102 items
-were flagged correctly and 3 were flagged incorrectly as `:offensive`.
+another class. For example, for all items known as `:positive`, 102 items
+were flagged correctly and 3 were flagged incorrectly as `:negative`.
 
 Although this helps, it would be nice to have ways to calculate a
 single number score.
@@ -126,9 +126,9 @@ class has been predicted:
 
 ````clojure
 
-user=> (precision :ok conf-matrix)
+user=> (precision :positive conf-matrix)
 102/109
-user=> (precision :offensive conf-matrix)
+user=> (precision :negative conf-matrix)
 62/63
 ````
 
@@ -140,11 +140,11 @@ _Sensitivity_, and corresponds to the true positive rate:
 
 ````clojure
 
-user=> (recall :ok conf-matrix)
+user=> (recall :positive conf-matrix)
 34/35
-user=> (recall :offensive conf-matrix)
+user=> (recall :negative conf-matrix)
 186/193
-user=> (sensitivity :offensive conf-matrix)
+user=> (sensitivity :negative conf-matrix)
 186/193
 ````
 
@@ -155,9 +155,9 @@ class:
 
 ````clojure
 
-user=> (f1-score :ok conf-matrix)
+user=> (f1-score :positive conf-matrix)
 102/107
-user=> (f1-score :offensive conf-matrix)
+user=> (f1-score :negative conf-matrix)
 186/191
 ````
 
@@ -181,8 +181,12 @@ example, if you are building a spam classifier:
 
 (def my-settings
   (update-settings settings
-                   [:classes] [:spam :ham]))
+                   [:classes] [:ham :spam]
+                   [:classifier :default :thresholds] {:ham 1.2
+                                                       :spam 2.5}))
 ````
+
+Note that we also specified thresholds for the new classes.
 
 ### Feature Extraction
 
@@ -325,10 +329,10 @@ setting:
 (def my-settings
   (update-settings settings
                    [:classifier :default :threshold?] true
-                   [:classifier :default :thresholds] {:ok 1 :offensive 2}))
+                   [:classifier :default :thresholds] {:positive 1 :negative 2}))
 ````
 
-If the probabilities for an item are `{:ok 0.45 :offensive 0.55}`, and
+If the probabilities for an item are `{:positive 0.45 :negative 0.55}`, and
 their thesholds are 1 and 2, respectively, the item will be flagged
 with the value defined in `[:classifier :default :unknown-class]`
 setting, which is `:unknown` by default.
@@ -359,8 +363,8 @@ the `[:classifier :default :smoothing-factor]` setting to zero.
 By default, class probabilities are calculated in a _biased_ fashion,
 that is, considering the number of items flagged in each class. For
 example, considering smoothing is disabled, if there's no item flagged
-as `:offensive`, the probability _P(offensive) = 0_. Similarly, if
-there's 3 offensive items out of 10, then _P(offensive) = 3/10_.
+as `:negative`, the probability _P(negative) = 0_. Similarly, if
+there's 3 negative items out of 10, then _P(negative) = 3/10_.
 
 If the `[:classifier :default :unbiased?]` setting is configured to
 `true`, the probability _P(any_class) = 1/(number_of_classes)_:

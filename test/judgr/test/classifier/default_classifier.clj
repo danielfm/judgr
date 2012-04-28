@@ -19,10 +19,10 @@
 (def-fixture basic-db []
   (let [classifier (classifier-from new-settings)]
     (doall (map (fn [[item class]] (.train! classifier item class))
-                '(["Você é um diabo, mesmo." :ok]
-                  ["Sai de ré, capeta." :offensive]
-                  ["Vai pro inferno, diabo!" :offensive]
-                  ["Sua filha é uma diaba, doido." :offensive])))
+                '(["Você é um diabo, mesmo." :positive]
+                  ["Sai de ré, capeta." :negative]
+                  ["Vai pro inferno, diabo!" :negative]
+                  ["Sua filha é uma diaba, doido." :negative])))
     (test-body)))
 
 (def-fixture smoothing-factor [factor]
@@ -72,43 +72,43 @@
     (with-fixture smoothing-factor [1]
       (with-fixture basic-db []
         (are [cls v] (close-to? v (.class-probability classifier cls))
-             :ok        1/3
-             :offensive 2/3))))
+             :positive        1/3
+             :negative 2/3))))
 
   (testing "without smoothing"
     (with-fixture smoothing-factor [0]
       (with-fixture basic-db []
         (are [cls v] (close-to? v (.class-probability classifier cls))
-             :ok        1/4
-             :offensive 3/4))))
+             :positive        1/4
+             :negative 3/4))))
 
   (testing "unbiased probability"
     (with-fixture unbiased? [true]
       (with-fixture basic-db []
         (are [cls v] (close-to? v (.class-probability classifier cls))
-             :ok        1/2
-             :offensive 1/2)))))
+             :positive        1/2
+             :negative 1/2)))))
 
 (deftest calculating-probability-of-feature-given-class
   (testing "with smoothing"
     (with-fixture smoothing-factor [1]
       (with-fixture basic-db []
         (are [f cls v] (close-to? v (.feature-probability-given-class classifier f cls))
-             "diab" :ok        1/6
-             "diab" :offensive 3/14
-             "filh" :ok        1/12
-             "filh" :offensive 1/7
-             "else" :ok        1/12))))
+             "diab" :positive        1/6
+             "diab" :negative 3/14
+             "filh" :positive        1/12
+             "filh" :negative 1/7
+             "else" :positive        1/12))))
 
   (testing "without smoothing"
     (with-fixture smoothing-factor [0]
       (with-fixture basic-db []
         (are [f cls v] (close-to? v (.feature-probability-given-class classifier f cls))
-             "diab" :ok        1
-             "diab" :offensive 2/3
-             "filh" :ok        0
-             "filh" :offensive 1/3
-             "else" :ok        0)))))
+             "diab" :positive        1
+             "diab" :negative 2/3
+             "filh" :positive        0
+             "filh" :negative 1/3
+             "else" :positive        0)))))
 
 (deftest calculating-probability-of-feature
   (testing "with smoothing"
@@ -133,50 +133,50 @@
       (with-fixture basic-db []
         (let [probs (.probabilities classifier "Filha do diabo.")]
           (are [cls v] (close-to? v (cls probs))
-               :offensive 225/392
-               :ok        25/192)))))
+               :negative 225/392
+               :positive        25/192)))))
 
   (testing "without smoothing"
     (with-fixture smoothing-factor [0]
       (with-fixture basic-db []
         (let [probs (.probabilities classifier "Filha do diabo.")]
           (are [cls v] (close-to? v (cls probs))
-               :offensive 8/9
-               :ok        0))))))
+               :negative 8/9
+               :positive        0))))))
 
 (deftest classifying-item
   (testing "class with greatest probability passes the threshold test"
     (with-fixture smoothing-factor [1]
-      (with-fixture thresholds [{:offensive 2.5 :ok 1.2}]
+      (with-fixture thresholds [{:negative 2.5 :positive 1.2}]
         (with-fixture basic-db []
           (are [cls item] (= cls (.classify classifier item))
-               :offensive "Filha do diabo.")))))
+               :negative "Filha do diabo.")))))
 
   (testing "unknown item due to failed threshold test"
     (with-fixture smoothing-factor [1]
-      (with-fixture thresholds [{:offensive 50 :ok 1}]
+      (with-fixture thresholds [{:negative 50 :positive 1}]
         (with-fixture basic-db []
           (are [cls item] (= cls (.classify classifier item))
                :unknown "Filha do diabo.")))))
 
   (testing "class with greatest probability without threshold test"
     (with-fixture smoothing-factor [1]
-      (with-fixture thresholds [{:offensive 50 :ok 1}]
+      (with-fixture thresholds [{:negative 50 :positive 1}]
         (with-fixture threshold-enabled? [false]
           (with-fixture basic-db []
             (are [cls item] (= cls (.classify classifier item))
-                 :offensive "Filha do diabo.")))))))
+                 :negative "Filha do diabo.")))))))
 
 (deftest training
   (with-fixture empty-db []
-    (.train! classifier "Sai de ré, capeta." :offensive)
+    (.train! classifier "Sai de ré, capeta." :negative)
 
     (testing "should add item"
       (let [item (last (.get-items (.db classifier)))]
         (is (= 1 (.count-items (.db classifier))))
         (are [k v] (= v (k item))
              :item  "Sai de ré, capeta."
-             :class :offensive)))
+             :class :negative)))
 
     (testing "should add item's features"
       (is (= 3 (.count-features (.db classifier))))

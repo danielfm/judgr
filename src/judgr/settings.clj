@@ -1,7 +1,7 @@
 (ns judgr.settings)
 
 (def ^:dynamic settings
-  {:classes   [:ok :offensive]
+  {:classes   [:positive :negative]
 
    :extractor {:type :english-text}
 
@@ -11,8 +11,8 @@
                 :default {:unbiased? false
                           :smoothing-factor 1
                           :threshold? true
-                          :thresholds {:ok 1.2
-                                       :offensive 2.5}
+                          :thresholds {:positive 1.2
+                                       :negative 2.5}
                           :unknown-class :unknown}}})
 
 (defn update-settings

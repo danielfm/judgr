@@ -18,10 +18,10 @@
 (def-fixture basic-db []
   (let [classifier (classifier-from new-settings)]
     (doall (map (fn [[item class]] (.train! classifier item class))
-                '(["Você é um diabo, mesmo." :ok]
-                  ["Sai de ré, capeta." :offensive]
-                  ["Vai pro inferno, diabo!" :offensive]
-                  ["Sua filha é uma diaba, doido." :offensive])))
+                '(["Você é um diabo, mesmo." :positive]
+                  ["Sai de ré, capeta." :negative]
+                  ["Vai pro inferno, diabo!" :negative]
+                  ["Sua filha é uma diaba, doido." :negative])))
     (test-body)))
 
 (def-fixture thresholds [thresholds]
@@ -202,38 +202,38 @@
   (with-fixture basic-db []
     (testing "train another batch of items"
       (is (= 4 (.count-items (.db classifier))))
-      (train-partition! '({:item "Tudo bem?"  :class :ok}
-                          {:item "Maravilha." :class :ok}) classifier)
+      (train-partition! '({:item "Tudo bem?"  :class :positive}
+                          {:item "Maravilha." :class :positive}) classifier)
       (is (= 6 (.count-items (.db classifier)))))))
 
 (deftest training-all-partitions-except-nth
   (with-fixture basic-db []
-    (let [partitions '(({:item "Tudo bem?"  :class :ok}
-                        {:item "Maravilha." :class :ok})
-                       ({:item "Tudo ok?"   :class :ok}))]
+    (let [partitions '(({:item "Tudo bem?"  :class :positive}
+                        {:item "Maravilha." :class :positive})
+                       ({:item "Tudo ok?"   :class :positive}))]
       (train-all-partitions-but! 0 partitions classifier)
       (is (= 5 (.count-items (.db classifier)))))))
 
 (deftest counting-expected-vs-predicted
-  (with-fixture thresholds [{:offensive 2.5 :ok 1.2}]
+  (with-fixture thresholds [{:negative 2.5 :positive 1.2}]
     (with-fixture basic-db []
       (testing "expected-predicted count map when prediction matches"
-        (is (= {:offensive {:offensive 1}}
-               (expected-predicted-count {:item "Lugar de diabo é no inferno." :class :offensive}
+        (is (= {:negative {:negative 1}}
+               (expected-predicted-count {:item "Lugar de diabo é no inferno." :class :negative}
                                          classifier))))
 
       (testing "expected-predicted count map when prediction doesn't match"
-        (is (= {:ok {:offensive 1}}
-               (expected-predicted-count {:item "Lugar de diabo é no inferno." :class :ok}
+        (is (= {:positive {:negative 1}}
+               (expected-predicted-count {:item "Lugar de diabo é no inferno." :class :positive}
                                          classifier)))))))
 
 (deftest evaluating-a-model
-  (with-fixture thresholds [{:offensive 2.5 :ok 1.2}]
+  (with-fixture thresholds [{:negative 2.5 :positive 1.2}]
     (with-fixture basic-db []
-      (let [items '({:item "Oi mesmo..." :class :ok} ;; predicted as unknown
+      (let [items '({:item "Oi mesmo..." :class :positive} ;; predicted as unknown
                     {:item "Sou eu mesmo!" :class :unknown}
-                    {:item "Vai seu diabo dos infernos" :class :offensive}
-                    {:item "Filha do diabo!" :class :offensive}
-                    {:item "Capeta." :class :offensive})]
-        (is (= {:offensive {:offensive 3} :unknown {:unknown 1} :ok {:unknown 1}}
+                    {:item "Vai seu diabo dos infernos" :class :negative}
+                    {:item "Filha do diabo!" :class :negative}
+                    {:item "Capeta." :class :negative})]
+        (is (= {:negative {:negative 3} :unknown {:unknown 1} :positive {:unknown 1}}
                (eval-model items classifier)))))))
