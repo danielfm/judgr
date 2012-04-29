@@ -1,14 +1,11 @@
 (ns judgr.db.memory-db
-  (:use [judgr.db.base])
-  (:import [java.util Date]))
+  (:use [judgr.db.base]))
 
 (deftype MemoryDB [settings items-atom features-atom]
   FeatureDB
   (add-item! [db item class]
     (ensure-valid-class settings class
-      (let [data {:item item
-                  :created-at (Date.)
-                  :class class}]
+      (let [data {:item item :class class}]
         (swap! items-atom conj data)
         data)))
 
