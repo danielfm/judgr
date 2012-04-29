@@ -41,10 +41,17 @@ user=> (def classifier (classifier-from settings))
 Now you can start training the classifier with `(.train! classifier item :class)`:
 
 ````clojure
-
+;; Training one example at a time...
 (.train! classifier "How are you?" :positive)
 (.train! classifier "I hate your kind, I hope you burn in hell." :negative)
 (.train! classifier ...)
+
+;; ... or training all examples of a given class at once
+(def positive-items [...])
+(def negative-items [...])
+
+(.train-all! classifier positive-items :positive)
+(.train-all! classifier negative-items :negative)
 ````
 
 The default classifier saves data to memory and are capable of
