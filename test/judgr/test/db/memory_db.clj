@@ -31,12 +31,12 @@
   (with-fixture empty-db []
     (testing "if everything's ok"
       (let [data (.add-item! db "Some message" :positive)]
-        (is (= "Some message" (:item data)))
-        (is (= :positive (:class data)))))
+        (is (= {:item "Some message" :class :positive}))))
 
     (testing "if class is invalid"
-      (is (thrown? IllegalArgumentException
-                   (.add-item! db "Uma mensagem" :some-class))))))
+      (is (thrown-with-msg? IllegalArgumentException
+            #"Invalid class :some-class"
+            (.add-item! db "Uma mensagem" :some-class))))))
 
 (deftest adding-features
   (with-fixture empty-db []

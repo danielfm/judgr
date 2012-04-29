@@ -6,7 +6,7 @@ in body."
   [settings class & body]
   `(if ((set (:classes ~settings)) ~class)
      (do ~@body)
-     (throw (IllegalArgumentException. "Invalid class"))))
+     (throw (IllegalArgumentException. (str "Invalid class " ~class)))))
 
 (defprotocol FeatureDB
   "Protocol for reading/writing feature information from/to a database."
