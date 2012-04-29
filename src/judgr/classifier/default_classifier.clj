@@ -21,7 +21,9 @@ no threshold config for that class."
     (let [factor (get (classifier-settings settings) :smoothing-factor 0)
           cls-count (+ (or cls-count 0) factor)
           total-count (+ (or total-count 0) (* occurrences factor))]
-      (/ cls-count total-count)))
+      (if (zero? total-count)
+        (throw (IllegalStateException. "There is no training data"))
+        (/ cls-count total-count))))
 
 (deftype DefaultClassifier [settings db extractor]
   Classifier

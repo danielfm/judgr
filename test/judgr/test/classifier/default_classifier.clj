@@ -51,12 +51,19 @@
     (is (instance? DefaultClassifier classifier))))
 
 (deftest calculating-probabilities
+  (testing "without training data"
+    (with-fixture smoothing-factor [0]
+      (with-fixture empty-db []
+        (is (thrown-with-msg? IllegalStateException #"no training data"
+              (probability 10 0 2 new-settings))))))
+
   (testing "with smoothing enabled"
     (with-fixture smoothing-factor [1]
       (with-fixture empty-db []
         (are [cls total v] (close-to? v (probability cls total 2 new-settings))
              3   100 4/102
              0   100 1/102
+             0   0   1/2
              nil 100 1/102))))
 
   (testing "with smoothing disabled"
