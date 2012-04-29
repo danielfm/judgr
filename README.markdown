@@ -41,12 +41,15 @@ user=> (def classifier (classifier-from settings))
 Now you can start training the classifier with `(.train! classifier item :class)`:
 
 ````clojure
-;; Training one example at a time...
 (.train! classifier "How are you?" :positive)
-(.train! classifier "I hate your kind, I hope you burn in hell." :negative)
+(.train! classifier "Burn in hell!" :negative)
 (.train! classifier ...)
+````
 
-;; ... or training all examples of a given class at once
+If you want to train all examples of a given class at once, there's
+also `(.train-all! classifier items :class)`:
+
+````clojure
 (def positive-items ["How are you?" ...])
 (def negative-items ["Burn in hell!" ...])
 
