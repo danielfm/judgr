@@ -47,8 +47,8 @@ Now you can start training the classifier with `(.train! classifier item :class)
 (.train! classifier ...)
 
 ;; ... or training all examples of a given class at once
-(def positive-items [...])
-(def negative-items [...])
+(def positive-items ["How are you?" ...])
+(def negative-items ["Burn in hell!" ...])
 
 (.train-all! classifier positive-items :positive)
 (.train-all! classifier negative-items :negative)
