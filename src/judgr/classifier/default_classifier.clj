@@ -6,10 +6,19 @@
   [settings]
   (-> settings :classifier :default))
 
+(defn- threshold-for-class
+  "Returns the threshold for the given class. Raises an exception if there's
+no threshold config for that class."
+  [classifier-settings cls]
+  (if-let [threshold (cls (-> classifier-settings :thresholds))]
+    threshold
+    (throw (IllegalArgumentException.
+            (str "There is no threshold for class" cls)))))
+
 (defn probability
   "Calculates the probability with smoothing if it's enabled in settings."
   [cls-count total-count occurrences settings]
-    (let [factor (:smoothing-factor (classifier-settings settings))
+    (let [factor (get (classifier-settings settings) :smoothing-factor 0)
           cls-count (+ (or cls-count 0) factor)
           total-count (+ (or total-count 0) (* occurrences factor))]
       (/ cls-count total-count)))
@@ -32,7 +41,7 @@
           [first-prob second-prob & _] probs]
       (if (or (not (:threshold? classifier-settings))
               (<= (* (val second-prob)
-                     ((-> classifier-settings :thresholds) (key first-prob)))
+                     (threshold-for-class classifier-settings (key first-prob)))
                   (val first-prob)))
         (key first-prob)
         (:unknown-class classifier-settings))))
