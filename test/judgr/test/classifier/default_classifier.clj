@@ -16,6 +16,11 @@
   (let [classifier (classifier-from new-settings)]
     (test-body)))
 
+(def-fixture classes [classes]
+  (let [new-settings (update-settings new-settings
+                                      [:classes] classes)]
+    (test-body)))
+
 (def-fixture basic-db []
   (let [classifier (classifier-from new-settings)]
     (doall (map (fn [[item class]] (.train! classifier item class))
@@ -73,6 +78,13 @@
                 (probability 10 0 2 new-settings))))))))
 
 (deftest calculating-probability-of-class
+  (testing "with no configured classes"
+    (with-fixture classes [{}]
+      (with-fixture empty-db []
+        (is (thrown-with-msg? IllegalStateException
+              #"specify \[:classes\] setting"
+              (.class-probability classifier :positive))))))
+
   (testing "with smoothing"
     (with-fixture smoothing-factor [1]
       (with-fixture basic-db []
@@ -155,7 +167,8 @@
       (with-fixture thresholds [{:offensive 2.5 :ok 1.2}]
         (with-fixture basic-db []
           (is (thrown-with-msg?
-                IllegalArgumentException #"no threshold for class"
+                IllegalArgumentException
+                #"specify \[:classifier :default :thresholds\] setting"
                 (.classify classifier "Filha do diabo.")))))))
 
   (testing "class with greatest probability passes the threshold test"

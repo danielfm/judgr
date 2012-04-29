@@ -13,7 +13,7 @@ no threshold config for that class."
   (if-let [threshold (cls (-> classifier-settings :thresholds))]
     threshold
     (throw (IllegalArgumentException.
-            (str "There is no threshold for class" cls)))))
+            (str "Please specify [:classifier :default :thresholds] setting " cls)))))
 
 (defn probability
   "Calculates the probability with smoothing if it's enabled in settings."
@@ -52,6 +52,8 @@ no threshold config for that class."
 
   (class-probability [c class]
     (let [class-count (count (:classes settings))]
+      (when (zero? class-count)
+        (throw (IllegalStateException. "Please specify [:classes] setting")))
       (if (:unbiased? (classifier-settings settings))
         (/ 1 class-count)
         (probability (.count-items-of-class db class)
