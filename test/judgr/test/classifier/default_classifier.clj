@@ -72,21 +72,21 @@
     (with-fixture smoothing-factor [1]
       (with-fixture basic-db []
         (are [cls v] (close-to? v (.class-probability classifier cls))
-             :positive        1/3
+             :positive 1/3
              :negative 2/3))))
 
   (testing "without smoothing"
     (with-fixture smoothing-factor [0]
       (with-fixture basic-db []
         (are [cls v] (close-to? v (.class-probability classifier cls))
-             :positive        1/4
+             :positive 1/4
              :negative 3/4))))
 
   (testing "unbiased probability"
     (with-fixture unbiased? [true]
       (with-fixture basic-db []
         (are [cls v] (close-to? v (.class-probability classifier cls))
-             :positive        1/2
+             :positive 1/2
              :negative 1/2)))))
 
 (deftest calculating-probability-of-feature-given-class
@@ -94,21 +94,21 @@
     (with-fixture smoothing-factor [1]
       (with-fixture basic-db []
         (are [f cls v] (close-to? v (.feature-probability-given-class classifier f cls))
-             "diab" :positive        1/6
+             "diab" :positive 1/6
              "diab" :negative 3/14
-             "filh" :positive        1/12
+             "filh" :positive 1/12
              "filh" :negative 1/7
-             "else" :positive        1/12))))
+             "else" :positive 1/12))))
 
   (testing "without smoothing"
     (with-fixture smoothing-factor [0]
       (with-fixture basic-db []
         (are [f cls v] (close-to? v (.feature-probability-given-class classifier f cls))
-             "diab" :positive        1
+             "diab" :positive 1
              "diab" :negative 2/3
-             "filh" :positive        0
+             "filh" :positive 0
              "filh" :negative 1/3
-             "else" :positive        0)))))
+             "else" :positive 0)))))
 
 (deftest calculating-probability-of-feature
   (testing "with smoothing"
@@ -134,7 +134,7 @@
         (let [probs (.probabilities classifier "Filha do diabo.")]
           (are [cls v] (close-to? v (cls probs))
                :negative 225/392
-               :positive        25/192)))))
+               :positive 25/192)))))
 
   (testing "without smoothing"
     (with-fixture smoothing-factor [0]
@@ -142,9 +142,17 @@
         (let [probs (.probabilities classifier "Filha do diabo.")]
           (are [cls v] (close-to? v (cls probs))
                :negative 8/9
-               :positive        0))))))
+               :positive 0))))))
 
 (deftest classifying-item
+  (testing "threshold test enabled, but threshold for class is not specified"
+    (with-fixture smoothing-factor [0]
+      (with-fixture thresholds [{:offensive 2.5 :ok 1.2}]
+        (with-fixture basic-db []
+          (is (thrown-with-msg?
+                IllegalArgumentException #"no threshold for class"
+                (.classify classifier "Filha do diabo.")))))))
+
   (testing "class with greatest probability passes the threshold test"
     (with-fixture smoothing-factor [1]
       (with-fixture thresholds [{:negative 2.5 :positive 1.2}]
