@@ -194,19 +194,30 @@
                  :negative "Filha do diabo.")))))))
 
 (deftest training
-  (with-fixture empty-db []
-    (.train! classifier "Sai de ré, capeta." :negative)
+  (testing "training an individual item"
+    (with-fixture empty-db []
+      (.train! classifier "Sai de ré, capeta." :negative)
 
-    (testing "should add item"
-      (let [item (last (.get-items (.db classifier)))]
-        (is (= 1 (.count-items (.db classifier))))
-        (are [k v] (= v (k item))
-             :item  "Sai de ré, capeta."
-             :class :negative)))
+      (testing "should add item"
+        (let [item (last (.get-items (.db classifier)))]
+          (is (= 1 (.count-items (.db classifier))))
+          (are [k v] (= v (k item))
+               :item  "Sai de ré, capeta."
+               :class :negative)))
 
-    (testing "should add item's features"
-      (is (= 3 (.count-features (.db classifier))))
-      (are [feature] (not (nil? (.get-feature (.db classifier) feature)))
-           "sai"
-           "ré"
-           "capet"))))
+      (testing "should add item's features"
+        (is (= 3 (.count-features (.db classifier))))
+        (are [feature] (not (nil? (.get-feature (.db classifier) feature)))
+             "sai"
+             "ré"
+             "capet"))))
+
+  (testing "training several items at once"
+    (with-fixture empty-db []
+      (.train-all! classifier ["Sai de ré, capeta.",
+                               "Vai pro inferno!"] :negative)
+
+      (testing "should add items"
+        (is (= '({:item "Sai de ré, capeta." :class :negative}
+                 {:item "Vai pro inferno!"   :class :negative})
+               (.get-items (.db classifier))))))))

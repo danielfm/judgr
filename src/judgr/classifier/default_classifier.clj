@@ -33,6 +33,9 @@ no threshold config for that class."
       (.add-item! db item class)
       (doall (map #(.add-feature! db item % class) features))))
 
+  (train-all! [c items class]
+    (doall (map #(.train! c % class) items)))
+
   (probabilities [c item]
     (let [classes (:classes settings)]
       (zipmap classes (map #(.class-probability-given-item c % item) classes))))

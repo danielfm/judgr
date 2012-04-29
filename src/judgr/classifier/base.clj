@@ -6,6 +6,9 @@
   (train! [c item class]
     "Labels item with class.")
 
+  (train-all! [c items class]
+    "Labels all items with class.")
+
   (classify [c item]
     "Returns the class with the highest probability for item.")
 
