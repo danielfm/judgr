@@ -167,6 +167,19 @@ user=> (sensitivity :negative conf-matrix)
 186/193
 ````
 
+#### Specificity
+
+_Specificity_ indicates the ability of a model to identify negative
+results, that is, the proportion of negative instances predicted as
+negative:
+
+````clojure
+user=> (specificity :positive conf-matrix)
+186/193
+user=> (specificity :negative conf-matrix)
+34/35
+````
+
 #### F1 Score
 
 F1 Score is a weighted average of the precision and recall of a given
