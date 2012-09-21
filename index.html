@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Judgr by danielfm</title>
-    
+
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -17,11 +17,14 @@
       <header>
         <h1>Judgr</h1>
         <p>Multi-class Naïve Bayes Classifier library written in Clojure.</p>
+
         <p class="view"><a href="https://github.com/danielfm/judgr">View the Project on GitHub <small>danielfm/judgr</small></a></p>
+
+
         <ul>
           <li><a href="https://github.com/danielfm/judgr/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/danielfm/judgr/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/danielfm/judgr">Fork On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/danielfm/judgr">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
@@ -52,50 +55,46 @@ support for cross validation, and more.</p>
 
 <p>Add the following dependency to your <em>project.clj</em> file:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">[</span><span class="nv">judgr</span> <span class="s">"0.2.0"</span><span class="p">]</span>
-</pre>
-</div>
-
+</pre></div>
 
 <h3>Training The Classifier</h3>
 
 <p>The first step is to instantiate the classifier given the current settings:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">use</span> <span class="o">'</span><span class="p">[</span><span class="nv">judgr.core</span><span class="p">]</span>
             <span class="o">'</span><span class="p">[</span><span class="nv">judgr.settings</span><span class="p">])</span>
 <span class="nv">nil</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="k">def </span><span class="nv">classifier</span> <span class="p">(</span><span class="nf">classifier-from</span> <span class="nv">settings</span><span class="p">))</span>
 <span class="o">#</span><span class="ss">'user/classifier</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>Now you can start training the classifier with <code>(.train! classifier item :class)</code>:</p>
 
-<div class="highlight">
-<pre><span class="p">(</span><span class="nf">.train!</span> <span class="nv">classifier</span> <span class="s">"How are you?"</span> <span class="ss">:positive</span><span class="p">)</span>
+<div class="highlight"><pre>
+<span class="p">(</span><span class="nf">.train!</span> <span class="nv">classifier</span> <span class="s">"How are you?"</span> <span class="ss">:positive</span><span class="p">)</span>
 <span class="p">(</span><span class="nf">.train!</span> <span class="nv">classifier</span> <span class="s">"Burn in hell!"</span> <span class="ss">:negative</span><span class="p">)</span>
 <span class="p">(</span><span class="nf">.train!</span> <span class="nv">classifier</span> <span class="nv">...</span><span class="p">)</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>If you want to train all examples of a given class at once, there's
 also <code>(.train-all! classifier items :class)</code>:</p>
 
-<div class="highlight">
-<pre><span class="p">(</span><span class="k">def </span><span class="nv">positive-items</span> <span class="p">[</span><span class="s">"How are you?"</span> <span class="nv">...</span><span class="p">])</span>
+<div class="highlight"><pre>
+<span class="p">(</span><span class="k">def </span><span class="nv">positive-items</span> <span class="p">[</span><span class="s">"How are you?"</span> <span class="nv">...</span><span class="p">])</span>
 <span class="p">(</span><span class="k">def </span><span class="nv">negative-items</span> <span class="p">[</span><span class="s">"Burn in hell!"</span> <span class="nv">...</span><span class="p">])</span>
 
 <span class="p">(</span><span class="nf">.train-all!</span> <span class="nv">classifier</span> <span class="nv">positive-items</span> <span class="ss">:positive</span><span class="p">)</span>
 <span class="p">(</span><span class="nf">.train-all!</span> <span class="nv">classifier</span> <span class="nv">negative-items</span> <span class="ss">:negative</span><span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
+<p>Or train all examples of different classes:</p>
+
+<div class="highlight"><pre><span class="p">(</span><span class="nf">.train-all!</span> <span class="nv">classifier</span> <span class="p">[{</span><span class="ss">:item</span> <span class="s">"How are you?"</span>  <span class="ss">:class</span> <span class="ss">:positive</span><span class="p">}</span>
+                         <span class="p">{</span><span class="ss">:item</span> <span class="s">"Burn in hell!"</span> <span class="ss">:class</span> <span class="ss">:negative</span><span class="p">}])</span>
+</pre></div>
 
 <p>The default classifier saves data to memory and are capable of
 extracting words from the given text using a porter stemmer. Also,
@@ -108,25 +107,19 @@ problem requires different settings, please take a look at the
 <p>After some training you should be able to use the classifier to guess
 on which class that item falls into:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">.classify</span> <span class="nv">classifier</span> <span class="s">"Long time, no see."</span><span class="p">)</span>
 <span class="ss">:positive</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">.classify</span> <span class="nv">classifier</span> <span class="s">"Go to hell."</span><span class="p">)</span>
 <span class="ss">:negative</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>It's also possible to get the probabilities for all classes:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">.probabilities</span> <span class="s">"Long time, no see."</span><span class="p">)</span>
 <span class="p">{</span><span class="ss">:negative</span> <span class="mf">0.38461539149284363</span>, <span class="ss">:positive</span> <span class="mf">0.6153846383094788</span><span class="p">}</span>
-</pre>
-</div>
-
+</pre></div>
 
 <h3>Evaluating The Classifier</h3>
 
@@ -138,8 +131,7 @@ as <a href="http://en.wikipedia.org/wiki/Cross-validation">Cross-validation</a>.
 <p>The output of a <em>K</em>-Fold Cross-validation process is a
 <a href="http://en.wikipedia.org/wiki/Confusion_matrix">Confusion Matrix</a>.</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">use</span> <span class="ss">'judgr.cross-validation</span><span class="p">)</span>
 <span class="nv">nil</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="k">def </span><span class="nv">conf-matrix</span> <span class="p">(</span><span class="nf">k-fold-crossval</span> <span class="mi">2</span> <span class="nv">classifier</span><span class="p">))</span>
@@ -149,9 +141,7 @@ as <a href="http://en.wikipedia.org/wiki/Cross-validation">Cross-validation</a>.
             <span class="ss">:negative</span> <span class="mi">3</span><span class="p">}</span>
  <span class="ss">:negative</span> <span class="p">{</span><span class="ss">:positive</span> <span class="mi">7</span>
             <span class="ss">:negative</span> <span class="mi">186</span><span class="p">}}</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>This Confusion Matrix will tell, for each known class, how many items
 it predicted correctly, and how many items it predicted as being in
@@ -166,13 +156,10 @@ single number score.</p>
 <p>The Accuracy is the percentage of predictions that the classifier got
 correct:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">accuracy</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">144</span><span class="nv">/149</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>In case of low accuracy, there are other calculations that might help
 you identify what's wrong.</p>
@@ -182,15 +169,12 @@ you identify what's wrong.</p>
 <p><em>Precision</em> is a measure of the accuracy provided that a specific
 class has been predicted:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">precision</span> <span class="ss">:positive</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">102</span><span class="nv">/109</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">precision</span> <span class="ss">:negative</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">62</span><span class="nv">/63</span>
-</pre>
-</div>
-
+</pre></div>
 
 <h4>Recall</h4>
 
@@ -198,32 +182,38 @@ class has been predicted:</p>
 a certain class from a data set. It is commonly also called
 <em>Sensitivity</em>, and corresponds to the true positive rate:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">recall</span> <span class="ss">:positive</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">34</span><span class="nv">/35</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">recall</span> <span class="ss">:negative</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">186</span><span class="nv">/193</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">sensitivity</span> <span class="ss">:negative</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">186</span><span class="nv">/193</span>
-</pre>
-</div>
+</pre></div>
 
+<h4>Specificity</h4>
+
+<p><em>Specificity</em> indicates the ability of a model to identify negative
+results, that is, the proportion of negative instances predicted as
+negative:</p>
+
+<div class="highlight"><pre><span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">specificity</span> <span class="ss">:positive</span> <span class="nv">conf-matrix</span><span class="p">)</span>
+<span class="mi">186</span><span class="nv">/193</span>
+<span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">specificity</span> <span class="ss">:negative</span> <span class="nv">conf-matrix</span><span class="p">)</span>
+<span class="mi">34</span><span class="nv">/35</span>
+</pre></div>
 
 <h4>F1 Score</h4>
 
 <p>F1 Score is a weighted average of the precision and recall of a given
 class:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">f1-score</span> <span class="ss">:positive</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">102</span><span class="nv">/107</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">f1-score</span> <span class="ss">:negative</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">186</span><span class="nv">/191</span>
-</pre>
-</div>
-
+</pre></div>
 
 <h4>References</h4>
 
@@ -239,8 +229,7 @@ class:</p>
 <p>Change the <code>[:classes]</code> setting to the classes you want to use. For
 example, if you are building a spam classifier:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="nf">use</span> <span class="ss">'judgr.settings</span><span class="p">)</span>
 
 <span class="p">(</span><span class="k">def </span><span class="nv">my-settings</span>
@@ -248,9 +237,7 @@ example, if you are building a spam classifier:</p>
                    <span class="p">[</span><span class="ss">:classes</span><span class="p">]</span> <span class="p">[</span><span class="ss">:ham</span> <span class="ss">:spam</span><span class="p">]</span>
                    <span class="p">[</span><span class="ss">:classifier</span> <span class="ss">:default</span> <span class="ss">:thresholds</span><span class="p">]</span> <span class="p">{</span><span class="ss">:ham</span> <span class="mf">1.2</span>
                                                        <span class="ss">:spam</span> <span class="mf">2.5</span><span class="p">}))</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>Note that we also specified thresholds for the new classes.</p>
 
@@ -267,8 +254,7 @@ Portuguese, based on the work done in
 <p>The first thing you have to do is create a type that extends the
 <code>FeatureExtractor</code> protocol:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="kd">ns </span><span class="nv">your-ns</span>
   <span class="p">(</span><span class="ss">:use</span> <span class="p">[</span><span class="nv">judgr.extractor.base</span><span class="p">]))</span>
 
@@ -278,30 +264,24 @@ Portuguese, based on the work done in
   <span class="p">(</span><span class="nf">extract-features</span> <span class="p">[</span><span class="nv">fe</span> <span class="nv">item</span><span class="p">]</span>
     <span class="c1">;; Feature extraction logic here</span>
     <span class="p">))</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>Finally, define a new method for <code>extractor-from</code> multimethod that
 knows how to create a new instance of <code>CustomExtractor</code>:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="kd">ns </span><span class="nv">your-ns</span>
   <span class="p">(</span><span class="ss">:use</span> <span class="p">[</span><span class="nv">judgr.core</span><span class="p">]))</span>
 
 <span class="p">(</span><span class="kd">defmethod </span><span class="nv">extractor-from</span> <span class="ss">:custom</span> <span class="p">[</span><span class="nv">settings</span><span class="p">]</span>
   <span class="p">(</span><span class="nf">CustomExtractor.</span> <span class="nv">settings</span><span class="p">))</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>To use the new extractor, just create a new settings map with
 <code>[:extractor :type]</code> setting configured to <code>:custom</code>, the same key
 used in <code>defmethod</code>:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">use</span> <span class="ss">'judgr.settings</span><span class="p">)</span>
 <span class="nv">nil</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="k">def </span><span class="nv">my-settings</span>
@@ -310,9 +290,7 @@ used in <code>defmethod</code>:</p>
 <span class="o">#</span><span class="ss">'user/my-settings</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">extractor-from</span> <span class="nv">my-settings</span><span class="p">)</span>
 <span class="o">#</span><span class="nv">&lt;CustomExtractor</span> <span class="nv">...&gt;</span>
-</pre>
-</div>
-
+</pre></div>
 
 <h3>Database Integration</h3>
 
@@ -334,8 +312,7 @@ Feature Extractor</em> section.</p>
 
 <p>First, create a new type that extends the <code>FeatureDB</code> protocol:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="kd">ns </span><span class="nv">your-ns</span>
   <span class="p">(</span><span class="ss">:use</span> <span class="p">[</span><span class="nv">judgr.db.base</span><span class="p">]))</span>
 
@@ -348,30 +325,24 @@ Feature Extractor</em> section.</p>
 
   <span class="c1">;; Implement the other methods</span>
 <span class="p">)</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>Then, define a new method for <code>db-from</code> multimethod that knows how to
 create a new instance of <code>CustomDB</code>:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="kd">ns </span><span class="nv">your-ns</span>
   <span class="p">(</span><span class="ss">:use</span> <span class="p">[</span><span class="nv">judgr.core</span><span class="p">]))</span>
 
 <span class="p">(</span><span class="kd">defmethod </span><span class="nv">db-from</span> <span class="ss">:custom</span> <span class="p">[</span><span class="nv">settings</span><span class="p">]</span>
   <span class="p">(</span><span class="nf">CustomDB.</span> <span class="nv">settings</span><span class="p">))</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>To use the new database layer, just create a new settings map with
 <code>[:database :type]</code> setting configured to <code>:custom</code>, the same key used
 in <code>defmethod</code>:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">use</span> <span class="ss">'judgr.settings</span><span class="p">)</span>
 <span class="nv">nil</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="k">def </span><span class="nv">my-settings</span>
@@ -380,9 +351,7 @@ in <code>defmethod</code>:</p>
 <span class="o">#</span><span class="ss">'user/settings</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">db-from</span> <span class="nv">my-settings</span><span class="p">)</span>
 <span class="o">#</span><span class="nv">&lt;CustomDB</span> <span class="nv">...&gt;</span>
-</pre>
-</div>
-
+</pre></div>
 
 <h3>Classifier Implementation</h3>
 
@@ -400,17 +369,14 @@ times greater than the second highest probability. The threshold for
 each class can be configured in <code>[:classifier :default :thresholds]</code>
 setting:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="nf">use</span> <span class="ss">'judgr.settings</span><span class="p">)</span>
 
 <span class="p">(</span><span class="k">def </span><span class="nv">my-settings</span>
   <span class="p">(</span><span class="nf">update-settings</span> <span class="nv">settings</span>
                    <span class="p">[</span><span class="ss">:classifier</span> <span class="ss">:default</span> <span class="ss">:threshold?</span><span class="p">]</span> <span class="nv">true</span>
                    <span class="p">[</span><span class="ss">:classifier</span> <span class="ss">:default</span> <span class="ss">:thresholds</span><span class="p">]</span> <span class="p">{</span><span class="ss">:positive</span> <span class="mi">1</span> <span class="ss">:negative</span> <span class="mi">2</span><span class="p">}))</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>If the probabilities for an item are <code>{:positive 0.45 :negative 0.55}</code>, and
 their thesholds are 1 and 2, respectively, the item will be flagged
@@ -426,16 +392,13 @@ features by not returning a flat zero probability.</p>
 to change the smoothing intensity, although the default value is
 usually good enough:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="nf">use</span> <span class="ss">'judgr.settings</span><span class="p">)</span>
 
 <span class="p">(</span><span class="k">def </span><span class="nv">my-settings</span>
   <span class="p">(</span><span class="nf">update-settings</span> <span class="nv">settings</span>
                    <span class="p">[</span><span class="ss">:classifier</span> <span class="ss">:default</span> <span class="ss">:smoothing-factor</span><span class="p">]</span> <span class="mf">0.7</span><span class="p">))</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>Although it's not recommended, you can turn smoothing off by changing
 the <code>[:classifier :default :smoothing-factor]</code> setting to zero.</p>
@@ -451,23 +414,19 @@ there's 3 negative items out of 10, then <em>P(negative) = 3/10</em>.</p>
 <p>If the <code>[:classifier :default :unbiased?]</code> setting is configured to
 <code>true</code>, the probability <em>P(any_class) = 1/(number_of_classes)</em>:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="nf">use</span> <span class="ss">'judgr.settings</span><span class="p">)</span>
 
 <span class="p">(</span><span class="k">def </span><span class="nv">my-settings</span>
   <span class="p">(</span><span class="nf">update-settings</span> <span class="nv">settings</span>
                    <span class="p">[</span><span class="ss">:classifier</span> <span class="ss">:default</span> <span class="ss">:unbiased?</span><span class="p">]</span> <span class="nv">true</span><span class="p">))</span>
-</pre>
-</div>
-
+</pre></div>
 
 <h3>Providing Your Own Classifier</h3>
 
 <p>First, create a new type that extends the <code>Classifier</code> protocol:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="kd">ns </span><span class="nv">your-ns</span>
   <span class="p">(</span><span class="ss">:use</span> <span class="p">[</span><span class="nv">judgr.classifier.base</span><span class="p">]))</span>
 
@@ -480,15 +439,12 @@ there's 3 negative items out of 10, then <em>P(negative) = 3/10</em>.</p>
 
   <span class="c1">;; Implement the other methods</span>
 <span class="p">)</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>Then, define a new method for <code>classifier-from</code> multimethod that knows
 how to create a new instance of <code>CustomClassifier</code>:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="p">(</span><span class="kd">ns </span><span class="nv">your-ns</span>
   <span class="p">(</span><span class="ss">:use</span> <span class="p">[</span><span class="nv">judgr.core</span><span class="p">]))</span>
 
@@ -496,16 +452,13 @@ how to create a new instance of <code>CustomClassifier</code>:</p>
   <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">db</span> <span class="p">(</span><span class="nf">db-from</span> <span class="nv">settings</span><span class="p">)</span>
         <span class="nv">extractor</span> <span class="p">(</span><span class="nf">extractor-from</span> <span class="nv">settings</span><span class="p">)]</span>
     <span class="p">(</span><span class="nf">CustomClassifier.</span> <span class="nv">settings</span> <span class="nv">db</span> <span class="nv">extractor</span><span class="p">)))</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>To use the new classifier, just create a new settings map with
 <code>[:classifier :type]</code> setting configured to <code>:custom</code>, the same key
 used in <code>defmethod</code>:</p>
 
-<div class="highlight">
-<pre>
+<div class="highlight"><pre>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">use</span> <span class="ss">'judgr.settings</span><span class="p">)</span>
 <span class="nv">nil</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="k">def </span><span class="nv">my-settings</span>
@@ -514,9 +467,7 @@ used in <code>defmethod</code>:</p>
 <span class="o">#</span><span class="ss">'user/settings</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">classifier-from</span> <span class="nv">my-settings</span><span class="p">)</span>
 <span class="o">#</span><span class="nv">&lt;CustomClassifier</span> <span class="nv">...&gt;</span>
-</pre>
-</div>
-
+</pre></div>
 
 <h2>License</h2>
 
