@@ -10,7 +10,7 @@
          (alter items conj data))
         data)))
 
-  (clear-db! [db]
+  (clean-db! [db]
     (dosync
      (ref-set items [])
      (ref-set features [])))

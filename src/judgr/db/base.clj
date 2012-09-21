@@ -17,7 +17,7 @@ in body."
   (add-feature! [db item feature class]
     "Stores an item's feature indicating its class.")
 
-  (clear-db! [db]
+  (clean-db! [db]
     "Removes all items and features.")
 
   (count-features [db]

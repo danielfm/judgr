@@ -40,7 +40,7 @@
 
 (deftest removing-all-data
   (with-fixture basic-db []
-    (.clear-db! db)
+    (.clean-db! db)
     (testing "if everything's ok"
       (is (zero? (.count-items db)))
       (is (zero? (.count-features db))))))
