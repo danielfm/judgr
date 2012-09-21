@@ -9,6 +9,9 @@
         (swap! items-atom conj data)
         data)))
 
+  (remove-all-items! [db]
+    (reset! items-atom []))
+
   (add-feature! [db item feature class]
     (ensure-valid-class settings class
       (let [f (.get-feature db feature)]
@@ -24,6 +27,9 @@
                                [:classes class] (inc class-count))]
             (swap! features-atom assoc feature data)
             data)))))
+
+  (remove-all-features! [db]
+    (reset! features-atom {}))
 
   (get-feature [db feature]
     (@features-atom feature))

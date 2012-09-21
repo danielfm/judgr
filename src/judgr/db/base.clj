@@ -14,8 +14,14 @@ in body."
   (add-item! [db item class]
     "Stores an item indicating its class.")
 
+  (remove-all-items! [db]
+    "Removes all items.")
+
   (add-feature! [db item feature class]
     "Stores an item's feature indicating its class.")
+
+  (remove-all-features! [db]
+    "Removes all features.")
 
   (count-features [db]
     "Returns the total number of features.")
