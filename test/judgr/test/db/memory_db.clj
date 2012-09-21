@@ -38,11 +38,12 @@
             #"Invalid class :some-class"
             (.add-item! db "Uma mensagem" :some-class))))))
 
-(deftest removing-all-items
+(deftest removing-all-data
   (with-fixture basic-db []
-    (.remove-all-items! db)
+    (.clear-db! db)
     (testing "if everything's ok"
-      (is (zero? (.count-items db))))))
+      (is (zero? (.count-items db)))
+      (is (zero? (.count-features db))))))
 
 (deftest adding-features
   (with-fixture empty-db []
@@ -56,12 +57,6 @@
     (testing "if class is invalid"
       (is (thrown? IllegalArgumentException
                    (.add-feature! db "Uma mensagem" "message" :some-class))))))
-
-(deftest removing-all-features
-  (with-fixture basic-db []
-    (.remove-all-features! db)
-    (testing "if everything's ok"
-      (is (zero? (.count-features db))))))
 
 (deftest updating-features
   (with-fixture basic-db []
