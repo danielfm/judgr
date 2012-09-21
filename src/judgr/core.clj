@@ -15,7 +15,7 @@
 (defmulti db-from #(-> % :database :type))
 
 (defmethod db-from :memory [settings]
-  (let [item-atom (atom '[])
+  (let [item-atom (atom [])
         feature-atom (atom {})]
     (MemoryDB. settings item-atom feature-atom)))
 
