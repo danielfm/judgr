@@ -59,6 +59,13 @@ also `(.train-all! classifier items :class)`:
 (.train-all! classifier negative-items :negative)
 ````
 
+Or train all examples of different classes:
+
+````clojure
+(.train-all! classifier [{:item "How are you?"  :class :positive}
+                         {:item "Burn in hell!" :class :negative}])
+````
+
 The default classifier saves data to memory and are capable of
 extracting words from the given text using a porter stemmer. Also,
 items can be classified as either `:positive` or `:negative`. If your

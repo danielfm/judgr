@@ -6,8 +6,9 @@
   (train! [c item class]
     "Labels item with class.")
 
-  (train-all! [c items class]
-    "Labels all items with class.")
+  (train-all! [c map] [c items class]
+    "Labels all items with class. If class is not provided, each item is a map
+in the form {:item item :class class}.")
 
   (classify [c item]
     "Returns the class with the highest probability for item.")

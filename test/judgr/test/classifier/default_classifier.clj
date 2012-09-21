@@ -213,11 +213,22 @@
              "capet"))))
 
   (testing "training several items at once"
-    (with-fixture empty-db []
-      (.train-all! classifier ["Sai de ré, capeta.",
-                               "Vai pro inferno!"] :negative)
+    (testing "all belonging to a specific class"
+      (with-fixture empty-db []
+        (.train-all! classifier
+                     ["Sai de ré, capeta.",
+                      "Vai pro inferno!"] :negative)
 
-      (testing "should add items"
-        (is (= '({:item "Sai de ré, capeta." :class :negative}
-                 {:item "Vai pro inferno!"   :class :negative})
-               (.get-items (.db classifier))))))))
+        (testing "should add items"
+          (is (= '({:item "Sai de ré, capeta." :class :negative}
+                   {:item "Vai pro inferno!"   :class :negative})
+                 (.get-items (.db classifier)))))))
+
+    (testing "items belonging to different classes"
+      (with-fixture empty-db []
+        (let [items [{:item "Você é um diabo, mesmo." :class :positive}
+                     {:item "Sai de ré, capeta." :class :negative}]]
+          (.train-all! classifier items)
+
+          (testing "should add items"
+            (is (= items (.get-items (.db classifier))))))))))
