@@ -174,6 +174,7 @@ results, that is, the proportion of negative instances predicted as
 negative:
 
 ````clojure
+
 user=> (specificity :positive conf-matrix)
 186/193
 user=> (specificity :negative conf-matrix)
