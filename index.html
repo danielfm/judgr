@@ -30,8 +30,6 @@
       <section>
         <h1>Judgr</h1>
 
-<p><a href="http://travis-ci.org/danielfm/judgr"><img src="https://secure.travis-ci.org/danielfm/judgr.png" alt="Build Status"></a></p>
-
 <p>Judgr (pronounced as judger) is a
 <a href="http://en.wikipedia.org/wiki/Naive_Bayes_classifier">naïve Bayes classifier</a>
 library written in Clojure which features multivariate classification,
@@ -197,7 +195,8 @@ a certain class from a data set. It is commonly also called
 results, that is, the proportion of negative instances predicted as
 negative:</p>
 
-<div class="highlight"><pre><span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">specificity</span> <span class="ss">:positive</span> <span class="nv">conf-matrix</span><span class="p">)</span>
+<div class="highlight"><pre>
+<span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">specificity</span> <span class="ss">:positive</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">186</span><span class="nv">/193</span>
 <span class="nv">user=&gt;</span> <span class="p">(</span><span class="nf">specificity</span> <span class="ss">:negative</span> <span class="nv">conf-matrix</span><span class="p">)</span>
 <span class="mi">34</span><span class="nv">/35</span>
