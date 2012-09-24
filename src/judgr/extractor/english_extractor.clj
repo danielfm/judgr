@@ -1,6 +1,5 @@
 (ns judgr.extractor.english-extractor
   (:use [judgr.extractor.base])
-  (:require [clojure.string :as str])
   (:import  [java.io StringReader]
             [org.apache.lucene.analysis.tokenattributes CharTermAttribute]
             [org.apache.lucene.analysis.en EnglishAnalyzer]
