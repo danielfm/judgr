@@ -198,14 +198,6 @@
         (is (= '("Vai pro inferno, diabo!" "Sua filha é uma diaba, doido.")
                (map :item (second partitions))))))))
 
-(deftest training-partition
-  (with-fixture basic-db []
-    (testing "train another batch of items"
-      (is (= 4 (.count-items (.db classifier))))
-      (train-partition! '({:item "Tudo bem?"  :class :positive}
-                          {:item "Maravilha." :class :positive}) classifier)
-      (is (= 6 (.count-items (.db classifier)))))))
-
 (deftest training-all-partitions-except-nth
   (with-fixture basic-db []
     (let [partitions '(({:item "Tudo bem?"  :class :positive}

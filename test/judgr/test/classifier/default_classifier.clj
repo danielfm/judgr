@@ -220,9 +220,7 @@
                       "Vai pro inferno!"] :negative)
 
         (testing "should add items"
-          (is (= '({:item "Sai de ré, capeta." :class :negative}
-                   {:item "Vai pro inferno!"   :class :negative})
-                 (.get-items (.db classifier)))))))
+          (is (= 2 (.count-items-of-class (.db classifier) :negative))))))
 
     (testing "items belonging to different classes"
       (with-fixture empty-db []
@@ -231,4 +229,5 @@
           (.train-all! classifier items)
 
           (testing "should add items"
-            (is (= items (.get-items (.db classifier))))))))))
+            (is (= 1 (.count-items-of-class (.db classifier) :negative)))
+            (is (= 1 (.count-items-of-class (.db classifier) :positive)))))))))

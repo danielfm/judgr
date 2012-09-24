@@ -18,15 +18,10 @@ at least two items in it."
         size (max (int (/ count (if (zero? k) 1 k))) 2)]
     (partition size (.get-items db))))
 
-(defn train-partition!
-  "Trains the chunk of items."
-  [items classifier]
-  (doall (map #(.train! classifier (:item %) (keyword (:class %))) items)))
-
 (defn train-all-partitions-but!
   "Trains all chunks of items except the chunk at nth position."
   [k items classifier]
-  (doall (map #(train-partition! % classifier) (remove-nth k items))))
+  (doall (map #(.train-all! classifier %) (remove-nth k items))))
 
 (defn expected-predicted-count
   "Returns a map {:expected-class {:predicted-class 1}}."
@@ -46,7 +41,7 @@ level contains predicted classes."
   [k classifier]
   (let [mem-classifier (in-memory-classifier classifier)
         subsets (partition-items k (.db classifier))]
-    (let [results (map (fn [i]
+    (let [results (pmap (fn [i]
                          (train-all-partitions-but! i subsets mem-classifier)
                          (eval-model (nth subsets i) mem-classifier))
                        (range (count subsets)))]
@@ -97,8 +92,8 @@ positive predictions that are correct."
       (/ tp (+ tp fp)))))
 
 (defn recall
-  "Calculates the recall of a confusion matrix, which is the percentage of positive
-labeled instances that were predicted as positive."
+  "Calculates the recall of a confusion matrix, which is the percentage
+of positive labeled instances that were predicted as positive."
   [cls conf-matrix]
   (let [tp (true-positives cls conf-matrix)
         fn (false-negatives cls conf-matrix)]
