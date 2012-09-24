@@ -1,7 +1,5 @@
 # Judgr
 
-[![Build Status](https://secure.travis-ci.org/danielfm/judgr.png)](http://travis-ci.org/danielfm/judgr)
-
 Judgr (pronounced as judger) is a
 [naïve Bayes classifier](http://en.wikipedia.org/wiki/Naive_Bayes_classifier)
 library written in Clojure which features multivariate classification,
