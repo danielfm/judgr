@@ -41,7 +41,7 @@ level contains predicted classes."
   [k classifier]
   (let [mem-classifier (in-memory-classifier classifier)
         subsets (partition-items k (.db classifier))]
-    (let [results (pmap (fn [i]
+    (let [results (map (fn [i]
                          (train-all-partitions-but! i subsets mem-classifier)
                          (eval-model (nth subsets i) mem-classifier))
                        (range (count subsets)))]

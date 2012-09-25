@@ -42,7 +42,7 @@ no threshold config for that class."
   (probabilities [c item]
     (let [classes (:classes settings)]
       (zipmap classes
-              (pmap #(.class-probability-given-item c % item) classes))))
+              (map #(.class-probability-given-item c % item) classes))))
 
   (classify [c item]
     (let [classifier-settings (classifier-settings settings)
