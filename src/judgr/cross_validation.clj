@@ -3,47 +3,50 @@
         [judgr.collection-util]
         [judgr.settings]))
 
-(defn- in-memory-classifier
-  "Returns a classifier based on the given one that uses an in-memory database."
-  [classifier]
-  (let [settings (update-settings (.settings classifier)
-                                  [:database :type] :memory)]
-    (classifier-from settings)))
-
-(defn partition-items
-  "Partitions all items into k chunks. Each chunk is guaranteed to have
-at least two items in it."
-  [k db]
-  (let [count (.count-items db)
-        size (max (int (/ count (if (zero? k) 1 k))) 2)]
-    (partition size (.get-items db))))
-
 (defn train-all-partitions-but!
   "Trains all chunks of items except the chunk at nth position."
   [k items classifier]
   (doall (map #(.train-all! classifier %) (remove-nth k items))))
 
-(defn expected-predicted-count
-  "Returns a map {:expected-class {:predicted-class 1}}."
-  [item classifier]
-  {(keyword (:class item)) {(.classify classifier (:item item)) 1}})
+(defn create-confusion-matrix
+  "Returns an empty confusion matrix."
+  [settings]
+  (let [classes (:classes settings)
+        entries (zipmap (conj classes (:unknown-class settings))
+                        (repeat 0))]
+    (zipmap classes (repeat entries))))
 
 (defn eval-model
-  "Evaluates the trained model against the chunk of items."
+  "Classifies labeled items and returns a confusion matrix representing
+the classification score."
   [items classifier]
-  (reduce aggregate-results
-          (map #(expected-predicted-count % classifier) items)))
+  (let [chunks (partition-all 4 items)
+        conf-matrix (create-confusion-matrix (.settings classifier))
+        updater (fn [conf-matrix item]
+                  (let [expected (:class item)
+                        predicted (.classify classifier (:item item))
+                        old (-> conf-matrix expected predicted)]
+      (assoc-in conf-matrix [expected predicted] (inc old))))]
+    (reduce aggregate-results
+            (pmap #(reduce updater conf-matrix %) chunks))))
+
+(defn- in-memory-classifier
+  "Returns a new in-memory classifier based on the given one."
+  [classifier]
+  (let [settings (update-settings (.settings classifier)
+                                  [:database :type] :memory)]
+    (classifier-from settings)))
 
 (defn k-fold-crossval
   "Performs k-fold cross validation and return a confusion matrix as a map
 of maps, where the first level contains the expected classes and the second
 level contains predicted classes."
   [k classifier]
-  (let [mem-classifier (in-memory-classifier classifier)
-        subsets (partition-items k (.db classifier))]
+  (let [subsets (partition-items k (shuffle (.get-items (.db classifier))))]
     (let [results (map (fn [i]
-                         (train-all-partitions-but! i subsets mem-classifier)
-                         (eval-model (nth subsets i) mem-classifier))
+                         (let [mem-classifier (in-memory-classifier classifier)]
+                           (train-all-partitions-but! i subsets mem-classifier)
+                           (eval-model (nth subsets i) mem-classifier)))
                        (range (count subsets)))]
       (reduce aggregate-results results))))
 
@@ -61,7 +64,9 @@ matrix."
   ([conf-matrix]
      (reduce + (vals (apply-to-each-key false-positives conf-matrix))))
   ([cls conf-matrix]
-     (reduce + (vals (apply-to-each-key #(get-in %2 [% cls] 0) (dissoc conf-matrix cls))))))
+     (reduce + (vals
+                (apply-to-each-key #(get-in %2 [% cls] 0)
+                                   (dissoc conf-matrix cls))))))
 
 (defn false-negatives
   "Returns the number of false negatives of a class or the entire confusion
@@ -69,9 +74,10 @@ matrix."
   ([conf-matrix]
      (reduce + (vals (apply-to-each-key false-negatives conf-matrix))))
   ([cls conf-matrix]
-     (reduce + (vals (dissoc (apply-to-each-key #(get-in %2 [cls %] 0)
-                                                (nested-dissoc conf-matrix [cls cls]))
-                             cls)))))
+     (reduce + (vals
+                (dissoc (apply-to-each-key #(get-in %2 [cls %] 0)
+                                           (nested-dissoc conf-matrix [cls cls]))
+                        cls)))))
 
 (defn true-negatives
   "Returns the number of true negatives of a class or the entire confusion
@@ -79,7 +85,9 @@ matrix."
   ([conf-matrix]
      (reduce + (vals (apply-to-each-key true-negatives conf-matrix))))
   ([cls conf-matrix]
-     (reduce + (vals (apply concat (map #(dissoc (val %) cls) (dissoc conf-matrix cls)))))))
+     (reduce + (vals
+                (apply concat (map #(dissoc (val %) cls)
+                                   (dissoc conf-matrix cls)))))))
 
 (defn precision
   "Calculates the precision of a confusion matrix, which is the percentage of
