@@ -220,7 +220,8 @@
                       "Vai pro inferno!"] :negative)
 
         (testing "should add items"
-          (is (= 2 (.count-items-of-class (.db classifier) :negative))))))
+          (is (= 2 (.count-items-of-class (.db classifier) :negative)))
+          (is (zero? (.count-items-of-class (.db classifier) :positive))))))
 
     (testing "items belonging to different classes"
       (with-fixture empty-db []
