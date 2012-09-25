@@ -34,10 +34,16 @@ no threshold config for that class."
       (doall (map #(.add-feature! db item % class) features))))
 
   (train-all! [c items class]
-    (doall (pmap #(.train! c % class) items)))
+    (let [chunks (partition-all 4 items)]
+      (doall (pmap (fn [chunk]
+                     (doall (map #(.train! c % class) chunk)))
+                   chunks))))
 
   (train-all! [c items]
-    (doall (pmap #(.train! c (:item %) (:class %))  items)))
+    (let [chunks (partition-all 4 items)]
+      (doall (pmap (fn [chunk]
+                     (doall (map #(.train! c (:item %) (:class %)) chunk)))
+                   chunks))))
 
   (probabilities [c item]
     (let [classes (:classes settings)]
@@ -53,7 +59,7 @@ no threshold config for that class."
                      (threshold-for-class classifier-settings (key first-prob)))
                   (val first-prob)))
         (key first-prob)
-        (:unknown-class classifier-settings))))
+        (:unknown-class settings))))
 
   NaiveBayes
 

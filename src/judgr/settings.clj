@@ -1,7 +1,8 @@
 (ns judgr.settings)
 
 (def ^:dynamic settings
-  {:classes   [:positive :negative]
+  {:classes       [:positive :negative]
+   :unknown-class :unknown
 
    :extractor {:type :english-text}
 
@@ -12,8 +13,7 @@
                           :smoothing-factor 1
                           :threshold? true
                           :thresholds {:positive 1.2
-                                       :negative 2.5}
-                          :unknown-class :unknown}}})
+                                       :negative 2.5}}}})
 
 (defn update-settings
   "Returns an updated version of map m by applying assoc-in.
