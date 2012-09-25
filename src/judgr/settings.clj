@@ -1,13 +1,10 @@
 (ns judgr.settings)
 
 (def ^:dynamic settings
-  {:classes       [:positive :negative]
+  {:classes [:positive :negative]
    :unknown-class :unknown
-
    :extractor {:type :english-text}
-
-   :database  {:type :memory}
-
+   :database {:type :memory}
    :classifier {:type :default
                 :default {:unbiased? false
                           :smoothing-factor 1
