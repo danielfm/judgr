@@ -8,6 +8,30 @@
   (testing "an index out of range"
     (is (= (range 5) (remove-nth 10 (range 5))))))
 
+(deftest partitioning-items
+  (let [items '(0 1 2 3)]
+    (testing "valid partitions"
+      (let [partitions (partition-items 1 items)]
+        (is (= 1 (count partitions)))
+        (is (= items (first partitions)))))
+
+    (testing "partition into zero subsets"
+      (let [partitions (partition-items 0 items)]
+        (is (= 1 (count partitions)))
+        (is (= items (first partitions)))))
+
+    (testing "partition avoiding using an incompatible divisor"
+      (let [partitions (partition-items 3 items)]
+        (is (= 2 (count partitions)))
+        (is (= '(0 1) (first partitions)))
+        (is (= '(2 3) (last partitions)))))
+
+    (testing "partition into too many subsets"
+      (let [partitions (partition-items 5 items)]
+        (is (= 2 (count partitions)))
+        (is (= '(0 1) (first partitions)))
+        (is (= '(2 3) (last partitions)))))))
+
 (deftest dissoc-nested-keys-in-map
   (let [a-map {:a 1 :b 2 :c {:d 3}}]
     (testing "dissoc a key in the map's root"

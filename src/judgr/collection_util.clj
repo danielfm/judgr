@@ -1,5 +1,12 @@
 (ns judgr.collection-util)
 
+(defn partition-items
+  "Partitions the items into k even chunks. Each chunk is guaranteed to have
+at least two items in it."
+  [k items]
+  (let [size (max (int (/ (count items) (if (zero? k) 1 k))) 2)]
+    (partition size items)))
+
 (defn remove-nth
   "Remove the nth element of a collection."
   [n coll]

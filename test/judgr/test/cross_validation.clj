@@ -42,6 +42,12 @@
                      :c {:a 6 :b 2}}]
     (test-body)))
 
+(deftest creating-empty-confusion-matrix
+  (with-fixture empty-db []
+    (is (= {:positive {:unknown 0 :positive 0 :negative 0}
+            :negative {:unknown 0 :positive 0 :negative 0}}
+           (create-confusion-matrix (.settings classifier))))))
+
 (deftest summing-true-negatives-from-class
   (with-fixture confusion-matrix []
     (is (= 72 (true-positives conf-matrix)))
@@ -170,62 +176,22 @@
   (with-fixture confusion-matrix []
     (is (close-to? 77/87 (accuracy conf-matrix)))))
 
-(deftest partitioning-items
-  (with-fixture basic-db []
-    (testing "valid partitions"
-      (let [partitions (partition-items 1 (.db classifier))]
-        (is (= 1 (count partitions)))
-        (is (= '("Você é um diabo, mesmo."
-                 "Sai de ré, capeta."
-                 "Vai pro inferno, diabo!"
-                 "Sua filha é uma diaba, doido.")
-               (map :item (first partitions))))))
-
-    (testing "partition into zero subsets"
-      (let [partitions (partition-items 0 (.db classifier))]
-        (is (= 1 (count partitions)))
-        (is (= '("Você é um diabo, mesmo."
-                 "Sai de ré, capeta."
-                 "Vai pro inferno, diabo!"
-                 "Sua filha é uma diaba, doido.")
-               (map :item (first partitions))))))
-
-    (testing "partition into too many subsets"
-      (let [partitions (partition-items 5 (.db classifier))]
-        (is (= 2 (count partitions)))
-        (is (= '("Você é um diabo, mesmo." "Sai de ré, capeta.")
-               (map :item (first partitions))))
-        (is (= '("Vai pro inferno, diabo!" "Sua filha é uma diaba, doido.")
-               (map :item (second partitions))))))))
-
 (deftest training-all-partitions-except-nth
-  (with-fixture basic-db []
+  (with-fixture empty-db []
     (let [partitions '(({:item "Tudo bem?"  :class :positive}
                         {:item "Maravilha." :class :positive})
                        ({:item "Tudo ok?"   :class :positive}))]
       (train-all-partitions-but! 0 partitions classifier)
-      (is (= 5 (.count-items (.db classifier)))))))
-
-(deftest counting-expected-vs-predicted
-  (with-fixture thresholds [{:negative 2.5 :positive 1.2}]
-    (with-fixture basic-db []
-      (testing "expected-predicted count map when prediction matches"
-        (is (= {:negative {:negative 1}}
-               (expected-predicted-count {:item "Lugar de diabo é no inferno." :class :negative}
-                                         classifier))))
-
-      (testing "expected-predicted count map when prediction doesn't match"
-        (is (= {:positive {:negative 1}}
-               (expected-predicted-count {:item "Lugar de diabo é no inferno." :class :positive}
-                                         classifier)))))))
+      (is (= 1 (.count-items (.db classifier)))))))
 
 (deftest evaluating-a-model
-  (with-fixture thresholds [{:negative 2.5 :positive 1.2}]
+  (with-fixture thresholds [{:negative 2.5 :positive 1}]
     (with-fixture basic-db []
-      (let [items '({:item "Oi mesmo..." :class :positive} ;; predicted as unknown
-                    {:item "Sou eu mesmo!" :class :unknown}
+      (let [items '({:item "Oi mesmo..." :class :positive} ;; predicted: unknown
+                    {:item "Você é um diabo?" :class :positive}
                     {:item "Vai seu diabo dos infernos" :class :negative}
                     {:item "Filha do diabo!" :class :negative}
                     {:item "Capeta." :class :negative})]
-        (is (= {:negative {:negative 3} :unknown {:unknown 1} :positive {:unknown 1}}
+        (is (= {:negative {:unknown 0 :positive 0 :negative 3}
+                :positive {:unknown 1 :positive 1 :negative 0}}
                (eval-model items classifier)))))))
