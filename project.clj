@@ -1,4 +1,4 @@
-(defproject judgr "0.3.0-SNAPSHOT"
+(defproject judgr "0.3.0"
   :description "Multi-class Naive Bayes Classifier library."
   :url "http://github.com/danielfm/judgr"
   :dependencies [[org.clojure/clojure "1.3.0"]

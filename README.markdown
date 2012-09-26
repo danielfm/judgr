@@ -20,7 +20,7 @@ Add the following dependency to your _project.clj_ file:
 
 ````clojure
 
-[judgr "0.2.2"]
+[judgr "0.3.0"]
 ````
 
 ### Training The Classifier
