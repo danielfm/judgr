@@ -1,6 +1,5 @@
 (ns judgr.extractor.brazilian-extractor
   (:use [judgr.extractor.base])
-  (:require [clojure.string :as str])
   (:import  [java.io StringReader]
             [org.apache.lucene.analysis.tokenattributes CharTermAttribute]
             [org.apache.lucene.analysis.br BrazilianAnalyzer]
@@ -8,16 +7,18 @@
 
 (def analyzer (BrazilianAnalyzer. Version/LUCENE_30))
 
-(defn remove-repeated-chars
-  "Removes long sequences of repeated chars in string s."
-  [s]
-  (str/replace s #"(\w)\1{2,}" "$1$1"))
+(defn- extractor-settings
+  "Returns the settings specific for this extractor."
+  [settings]
+  (-> settings :extractor :brazilian-text))
 
-(deftype BrazilianTextExtractor []
+(deftype BrazilianTextExtractor [settings]
   FeatureExtractor
   (extract-features [fe item]
-    (let [stream (.tokenStream analyzer "text" (StringReader. (remove-repeated-chars item)))]
+    (let [stream (.tokenStream analyzer "text" (StringReader. item))]
       (loop [tokens []]
         (if-not (.incrementToken stream)
-          (set tokens)
-          (recur (conj tokens (.term (.getAttribute stream CharTermAttribute)))))))))
+          (if (:remove-duplicates? (extractor-settings settings))
+            (set tokens) tokens)
+          (recur (conj tokens
+                       (.term (.getAttribute stream CharTermAttribute)))))))))
