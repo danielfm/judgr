@@ -3,8 +3,13 @@
 (def ^:dynamic settings
   {:classes [:positive :negative]
    :unknown-class :unknown
-   :extractor {:type :english-text}
+
    :database {:type :memory}
+
+   :extractor {:type :english-text
+               :english-text   {:remove-duplicates? true}
+               :brazilian-text {:remove-duplicates? true}}
+
    :classifier {:type :default
                 :default {:unbiased? false
                           :smoothing-factor 1

@@ -1,23 +1,30 @@
 (ns judgr.test.extractor.english-extractor
   (:use [judgr.extractor.english-extractor]
         [judgr.core]
+        [judgr.test.util]
         [judgr.settings]
         [clojure.test])
   (:import [judgr.extractor.english_extractor EnglishTextExtractor]))
 
-(def extractor
-  (extractor-from
-   (update-settings settings
-                    [:extractor :type] :english-text)))
+(def-fixture remove-duplicates [b]
+  (let [new-settings (update-settings settings
+                                      [:extractor :type] :english-text
+                                      [:extractor :english-text] {:remove-duplicates? b})
+        extractor (extractor-from new-settings)]
+    (test-body)))
 
 (deftest ensure-english-text-extractor
-  (is (instance? EnglishTextExtractor extractor)))
+  (with-fixture remove-duplicates [true]
+    (is (instance? EnglishTextExtractor extractor))))
 
 (deftest english-extractor
   (testing "extract features"
-    (is (= #{"syntax" "workshop" "about" "basic" "english" "idea" "review" "few"}
-           (.extract-features extractor "This workshop is a review of a few basic ideas about English syntax")))
+    (testing "removing duplicates"
+      (with-fixture remove-duplicates [true]
+        (is (= #{"syntax" "workshop" "about" "basic" "english" "idea" "review" "few"}
+           (.extract-features extractor "This workshop is a review of a few reviewed basic ideas about English syntax")))))
 
-    (testing "with repeated words"
-      (is (= #{"hello"}
-             (.extract-features extractor "Hello, hello!"))))))
+    (testing "leaving duplicates"
+      (with-fixture remove-duplicates [false]
+        (is (= ["workshop" "review" "few" "review" "basic" "idea" "about" "english" "syntax"]
+           (.extract-features extractor "This workshop is a review of a few reviewed basic ideas about English syntax")))))))
