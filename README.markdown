@@ -87,7 +87,7 @@ It's also possible to get the probabilities for all classes:
 
 ````clojure
 
-user=> (.probabilities "Long time, no see.")
+user=> (.probabilities classifier "Long time, no see.")
 {:negative 0.38461539149284363, :positive 0.6153846383094788}
 ````
 
