@@ -459,6 +459,12 @@ user=> (classifier-from my-settings)
 #<CustomClassifier ...>
 ````
 
+## Donate
+
+If this project is useful for you, buy me a beer!
+
+Bitcoin: `1CLFiuB5oghPjnq8zXFkYgKyFnCTVWEV1r`
+
 ## License
 
 Copyright (C) Daniel Fernandes Martins
